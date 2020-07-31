@@ -1,4 +1,4 @@
-# canaokey
+# canokey
 
 A new Flutter application.
 
