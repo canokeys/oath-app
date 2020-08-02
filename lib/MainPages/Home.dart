@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../Models/CanokeyModule.dart';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
-import 'dart:io'show sleep;
-import 'package:animated_floatactionbuttons/animated_floatactionbuttons.dart';
+import 'dart:io' show sleep;
+
 class HomeContent extends StatefulWidget {
   @override
   _HomeContentState createState() => _HomeContentState();
@@ -18,10 +18,10 @@ class _HomeContentState extends State<HomeContent> {
   String _result, _canokeyName = 'null', _transceiveInfo;
   List<String> idRepository = new List();
 
-
+  @override
   void initState() {
     super.initState();
-    initPlatformState();
+    nfcAvailabilityDetect();
   }
 
   _alertDialog(String info) {
@@ -44,7 +44,7 @@ class _HomeContentState extends State<HomeContent> {
         });
   }
 
- _inputAndCreate() async {
+  _inputAndCreate() async {
     TextEditingController _controller = TextEditingController();
     var tmpName = await showDialog(
         context: context,
@@ -91,7 +91,7 @@ class _HomeContentState extends State<HomeContent> {
     });
   }
 
- initPlatformState() async {
+  nfcAvailabilityDetect() async {
     NFCAvailability availability;
     try {
       availability = await FlutterNfcKit.nfcAvailability;
@@ -114,49 +114,35 @@ class _HomeContentState extends State<HomeContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: AnimatedFloatingActionButton(
-        fabButtons: <Widget>[
-          FloatingActionButton(
-            child: Icon(Icons.cast_connected),
-            onPressed: () async {
-                try {
-                  NFCTag tag = await FlutterNfcKit.poll();
-                  setState(() {
-                    _nfcTag = tag;
-                  });
-                } catch (error) {
-                  setState(() {
-                    _result = 'Error: $error';
-                    _alertDialog(_result);
-                  });
-                  return;
-                }
-                if (_nfcTag.standard == 'ISO 14443-4 (Type A)') {
-                  _result = await FlutterNfcKit.transceive('00A4040007A0000005272101');
-//            widget._credentialList = await FlutterNfcKit.transceive('0003000000');
-                }
-                int tmpIndex = idRepository.indexOf(_nfcTag.id);
-                if (tmpIndex == -1) {
-                  _inputAndCreate();
-                } else {
-                  _alertDialog('This Canokey has been connected before');
-                }
-                sleep(new Duration(seconds: 1));
-                await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
-              },
-          ),
-          FloatingActionButton(
-            child: Icon(Icons.refresh),
-            onPressed: (){
-              setState(() {
-                initPlatformState();
-              });
-            },
-          )
-        ],
-        colorStartAnimation: Colors.blue,
-        colorEndAnimation: Colors.red,
-        animatedIconData: AnimatedIcons.menu_close,
+      floatingActionButton: FloatingActionButton(
+        heroTag: null,
+        child: Icon(Icons.cast_connected),
+        onPressed: () async {
+          try {
+            NFCTag tag = await FlutterNfcKit.poll();
+            setState(() {
+              _nfcTag = tag;
+            });
+          } catch (error) {
+            setState(() {
+              _result = 'Error: $error';
+              _alertDialog(_result);
+            });
+            return;
+          }
+          if (_nfcTag.standard == 'ISO 14443-4 (Type A)') {
+            _result =
+                await FlutterNfcKit.transceive('00A4040007A0000005272101');
+          }
+          int tmpIndex = idRepository.indexOf(_nfcTag.id);
+          if (tmpIndex == -1) {
+            _inputAndCreate();
+          } else {
+            _alertDialog('This Canokey has been connected before');
+          }
+          sleep(new Duration(seconds: 1));
+          await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
+        },
       ),
       body: ListView(
         padding: EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 10.0),
@@ -174,6 +160,14 @@ class _HomeContentState extends State<HomeContent> {
               Icons.nfc,
               color: nfcAvailabilityColor,
             ),
+            trailing: IconButton(
+              icon: Icon(Icons.refresh),
+              color: Colors.black,
+              onPressed: (){
+                nfcAvailabilityDetect();
+                setState(() {});
+              },
+            ),
           ),
           Column(
             children: CanokeysRow,
@@ -182,7 +176,6 @@ class _HomeContentState extends State<HomeContent> {
       ),
     );
   }
-
 
   void removeWidget(Widget w) {
     int wIndex = CanokeysRow.indexOf(w);

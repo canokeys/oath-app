@@ -50,10 +50,6 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
         appBar: AppBar(
           //导航栏
           title: Text("Canokey Users Client"),
-          actions: <Widget>[
-            //导航栏右侧菜单
-            IconButton(icon: Icon(Icons.share), onPressed: () {}),
-          ],
         ),
         drawer: Drawer(
           child: Column(
@@ -184,12 +180,8 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
         bottomNavigationBar: BottomNavigationBar(
           // 底部导航
           items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-                icon: Icon(Icons.home), title: Text('Home')),
-//            BottomNavigationBarItem(
-//               icon: Icon(Icons.work), title: Text('Work')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.credit_card), title: Text('Credentials')),
+            BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+            BottomNavigationBarItem(icon: Icon(Icons.credit_card), title: Text('Credentials')),
           ],
           currentIndex: widget.selectedIndex,
           fixedColor: Colors.blue,

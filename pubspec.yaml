@@ -33,6 +33,7 @@ dependencies:
   animated_floatactionbuttons: ^0.1.0
   barcode_scan: ^3.0.1
   base32: 1.1.1
+  timer_count_down: ^1.0.4+1
 
 dev_dependencies:
   flutter_test:

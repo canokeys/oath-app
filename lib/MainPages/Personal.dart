@@ -7,7 +7,7 @@ class PersonalContent extends StatefulWidget {
   void credentialInfoSet(String value){
     _credentialInfo=value;
   }
-  PassWordsModule passWordsModule= PassWordsModule(UniqueKey(), 'Person');
+  KeysModule passWordsModule= KeysModule(UniqueKey(), 'Person');
   @override
   _PersonalContentState createState() => _PersonalContentState();
 }

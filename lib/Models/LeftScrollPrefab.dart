@@ -13,9 +13,7 @@ class leftScroll extends StatefulWidget {
   String nameInUtf8;
   String Type;
   String calculateOrder;
-  leftScroll(Key key, @required this.callback, this.text, this.nameInUtf8,
-      this.oneTimePassword,this.Type)
-      : super(key: key);
+  leftScroll(Key key, @required this.callback, this.text, this.nameInUtf8, this.oneTimePassword,this.Type) : super(key: key);
 
   @override
   _leftScrollState createState() => _leftScrollState();
