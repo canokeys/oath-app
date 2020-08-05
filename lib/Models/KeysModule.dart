@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:canaokey/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:canaokey/Models/LeftScrollPrefab.dart';
@@ -10,6 +9,7 @@ import 'package:animated_floatactionbuttons/animated_floatactionbuttons.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:base32/base32.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class KeysModule extends StatefulWidget {
   String heroTag;
@@ -277,133 +277,92 @@ class _KeysModuleState extends State<KeysModule> {
     TextEditingController _name = TextEditingController();
     TextEditingController _key = TextEditingController();
     int groupValue = 0;
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return StatefulBuilder(
-            builder: (context, state) {
-              return AlertDialog(
-                title: Text('Add New Account'),
-                content: Container(
-                  height: 250,
-                  width: 300,
-                  child: Column(
-                    children: <Widget>[
-                      Text('Account Name'),
-                      Container(
-                        child: TextField(
-                          maxLength: 64,
-                          controller: _name,
-                          autofocus: false,
-                        ),
-                        height: 50,
-                        width: 200,
-                      ),
-                      Text('Key (In Base32)'),
-                      Container(
-                        child: TextField(
-                          maxLength: 128,
-                          controller: _key,
-                          autofocus: false,
-                        ),
-                        height: 50,
-                        width: 200,
-//                alignment: Alignment.center,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Text('HOTP'),
-                          Radio(
-                            value: 0,
-                            groupValue: groupValue,
-                            onChanged: (v) {
-                              if (mounted)
-                                state(() {
-                                  groupValue = v;
-                                  print(groupValue);
-                                });
-                            },
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Text('TOTP'),
-                          Radio(
-                            value: 1,
-                            groupValue: groupValue,
-                            onChanged: (v) {
-                              if (mounted)
-                                state(() {
-                                  groupValue = v;
-                                  print(groupValue);
-                                });
-                            },
-                          )
-                        ],
-                      )
-                    ],
+        AwesomeDialog(
+            context: context,
+            headerAnimationLoop: false,
+            dialogType: DialogType.WARNING,
+            animType: AnimType.BOTTOMSLIDE,
+            title: 'Mention!',
+            body: Column(
+              children: <Widget>[
+                Text('Account Name'),
+                Container(
+                  child: TextField(
+                    maxLength: 64,
+                    controller: _name,
+                    autofocus: false,
                   ),
+                  height: 50,
+                  width: 200,
                 ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text('OK'),
-                    color: Colors.red,
-                    onPressed: () async {
-                      print('name:${_name.text},key:${_key
-                          .text},type:$groupValue');
-                      String typeAndalgorithm,
-                          nameInutf8 = '';
-                      if (groupValue == 0)
-                        typeAndalgorithm = '11';
-                      else
-                        typeAndalgorithm = '21';
-                      var intList = utf8.encode(_name.text);
-                      for (int i = 0; i < intList.length; i++) {
-                        nameInutf8 += intList[i].toRadixString(16);
-                      }
-                      String key = typeAndalgorithm + '06' +
-                          base32.decodeAsHexString(_key.text);
-                      int datalen = 2 + (nameInutf8.length / 2).floor() + 2 +
-                          (key.length / 2).floor();
-                      String nameLength = (nameInutf8.length / 2)
-                          .floor()
-                          .toRadixString(16)
-                          .padLeft(2, '0');
-                      String keyLength = (key.length / 2).floor().toRadixString(
-                          16).padLeft(2, '0');
-                      String dataLength = datalen.toRadixString(16).padLeft(
-                          2, '0');
-                      String order = '00010000${dataLength}71${nameLength}${nameInutf8}73${keyLength}${key}';
-                      print(order);
-                      await FlutterNfcKit.poll();
-                      String re1 = await FlutterNfcKit.transceive(
-                          '00A4040007A0000005272101');
-                      print(re1);
-                      if (re1 == '9000') {
-                        String re2 = await FlutterNfcKit.transceive(order);
-                        print(re2);
-                        if (re2 == '9000') {
-                          Navigator.pop(context);
-                          _successDialog('Add Account Successfully.');
-                        }
-                      }
-                      sleep(new Duration(seconds: 1));
-                      await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
-                    },
+                Text('Key (In Base32)'),
+                Container(
+                  child: TextField(
+                    maxLength: 128,
+                    controller: _key,
+                    autofocus: false,
                   ),
-                  FlatButton(
-                    child: Text('Cancel'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  )
-                ],
-              );
+                  height: 50,
+                  width: 200,
+                ),
+                ToggleSwitch(
+                  minWidth: 60.0,
+                  initialLabelIndex: 0,
+                  activeBgColor: Colors.blue,
+                  activeFgColor: Colors.white,
+                  inactiveBgColor: Colors.grey,
+                  inactiveFgColor: Colors.grey[900],
+                  labels: ['TOTP', 'HOTP'],
+                  onToggle: (index) {
+                    groupValue=index;
+                  },
+                )
+              ],
+            ),
+            btnOkOnPress: () async{
+              print('name:${_name.text},key:${_key
+                  .text},type:$groupValue');
+              String typeAndalgorithm,
+                  nameInutf8 = '';
+              if (groupValue == 0)
+                typeAndalgorithm = '11';
+              else
+                typeAndalgorithm = '21';
+              var intList = utf8.encode(_name.text);
+              for (int i = 0; i < intList.length; i++) {
+                nameInutf8 += intList[i].toRadixString(16);
+              }
+              String key = typeAndalgorithm + '06' +
+                  base32.decodeAsHexString(_key.text);
+              int datalen = 2 + (nameInutf8.length / 2).floor() + 2 +
+                  (key.length / 2).floor();
+              String nameLength = (nameInutf8.length / 2)
+                  .floor()
+                  .toRadixString(16)
+                  .padLeft(2, '0');
+              String keyLength = (key.length / 2).floor().toRadixString(
+                  16).padLeft(2, '0');
+              String dataLength = datalen.toRadixString(16).padLeft(
+                  2, '0');
+              String order = '00010000${dataLength}71${nameLength}${nameInutf8}73${keyLength}${key}';
+              print(order);
+              await FlutterNfcKit.poll();
+              String re1 = await FlutterNfcKit.transceive(
+                  '00A4040007A0000005272101');
+              print(re1);
+              if (re1 == '9000') {
+                String re2 = await FlutterNfcKit.transceive(order);
+                print(re2);
+                if (re2 == '9000') {
+                  Navigator.pop(context);
+                  _successDialog('Add Account Successfully.');
+                }
+              }
+              sleep(new Duration(seconds: 1));
+              await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
             },
-          );
-        });
+            btnCancelOnPress: (){}
+        )..show();
   }
 
   String calculateKey(String str) {
@@ -502,7 +461,8 @@ class _KeysModuleState extends State<KeysModule> {
             await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
           }
         }
-    )..show();
+    )
+      ..show();
   }
 
   @override
