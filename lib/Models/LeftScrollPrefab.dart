@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io'show sleep;
 import 'package:flutter/material.dart';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
@@ -13,9 +12,7 @@ class leftScroll extends StatefulWidget {
   String nameInUtf8;
   String Type;
   String calculateOrder;
-  leftScroll(Key key, @required this.callback, this.text, this.nameInUtf8,
-      this.oneTimePassword,this.Type)
-      : super(key: key);
+  leftScroll(Key key, @required this.callback, this.text, this.nameInUtf8, this.oneTimePassword,this.Type) : super(key: key);
 
   @override
   _leftScrollState createState() => _leftScrollState();

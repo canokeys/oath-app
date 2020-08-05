@@ -1,26 +1,27 @@
 import 'dart:math';
+import 'package:canaokey/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:canaokey/Models/LeftScrollPrefab.dart';
-import 'package:flutter/rendering.dart';
 import 'dart:io' show sleep;
 import 'dart:convert';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
 import 'package:animated_floatactionbuttons/animated_floatactionbuttons.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:base32/base32.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
-class PassWordsModule extends StatefulWidget {
+class KeysModule extends StatefulWidget {
   String heroTag;
 
-  PassWordsModule(Key key, this.heroTag) : super(key: key);
+  KeysModule(Key key, this.heroTag) : super(key: key);
 
   @override
-  _PassWordsModuleState createState() => _PassWordsModuleState();
+  _KeysModuleState createState() => _KeysModuleState();
 }
 
-class _PassWordsModuleState extends State<PassWordsModule> {
-  bool enableCanokey=false;
+class _KeysModuleState extends State<KeysModule> {
+  bool enableCanokey = false;
   var HomeRow = <Widget>[];
 
   List<String> parseData(String credentialList) {
@@ -29,24 +30,19 @@ class _PassWordsModuleState extends State<PassWordsModule> {
     return _matches.map((_match) => _match.group(1)).toList();
   }
 
-  void parseResponse(String response, List<String> hotp, List<Map> totp) {
+  parseResponse(String response, List<String> hotp, List<Map> totp) {
     print(response);
     for (int i = 0; i < response.length; i++) {
-//      print('tag: ${response[i]+response[i+1]+response[i+2]+response[i+3]}');
       if (response[i] + response[i + 1] + response[i + 2] + response[i + 3] ==
           '9000')
         return;
       else if (response[i] + response[i + 1] == '71') {
-//        print('namelen hex: ${response[i+2]+response[i+3]}');
-        int nameLen = _hexToInt(response[i + 2] + response[i + 3]) *
-            2; //print('namelen: $nameLen');
+        int nameLen = _hexToInt(response[i + 2] + response[i + 3]) * 2;
         String name = response.substring(
             i + 4, i + 4 + nameLen); //print('name: $name');
-//        print('type: ${response[i+4+nameLen]+response[i+4+nameLen+1]}');
         if (response[i + 4 + nameLen] + response[i + 4 + nameLen + 1] == '77') {
           hotp.add(name);
           i += (4 + nameLen + 6) - 1;
-//          print('i jump to: $i');
         } else
         if (response[i + 4 + nameLen] + response[i + 4 + nameLen + 1] == '76') {
           String totpkey = response.substring(
@@ -57,7 +53,6 @@ class _PassWordsModuleState extends State<PassWordsModule> {
           };
           totp.add(totpInfo);
           i += (4 + nameLen + 14) - 1;
-//          print('i jump to $i');
         }
       }
     }
@@ -100,9 +95,7 @@ class _PassWordsModuleState extends State<PassWordsModule> {
     for (int i = 0; i < encodeName.length; i++) {
       accountName += encodeName[i].toRadixString(16);
     }
-//    print(accountName);
     int nmlen = (accountName.length / 2).round();
-//    print(nmlen);
     String nameLen;
     nameLen = nmlen.toRadixString(16).padLeft(2, '0');
     String key = base32.decodeAsHexString(regResult['secret']);
@@ -139,7 +132,7 @@ class _PassWordsModuleState extends State<PassWordsModule> {
       print(order);
       _writeDialog(order);
     } else {
-      otpType = '22';
+      otpType = '21';
       order +=
       '${dataLen}71${nameLen}${accountName}73${keyLen}${otpType}06${key}';
       print(order);
@@ -167,84 +160,117 @@ class _PassWordsModuleState extends State<PassWordsModule> {
     return val;
   }
 
-  _successDialog() {
-    showDialog(
+  _successDialog(String info) {
+    AwesomeDialog(
         context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: Text('Success!'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('OK'),
-                color: Colors.red,
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        });
+        headerAnimationLoop: false,
+        dialogType: DialogType.SUCCES,
+        animType: AnimType.BOTTOMSLIDE,
+        title: 'Success!',
+        desc: info,
+        btnOkOnPress: () {}
+    )
+      ..show();
+  }
+
+  _failedDialog(String info) {
+    AwesomeDialog(
+        context: context,
+        headerAnimationLoop: false,
+        dialogType: DialogType.ERROR,
+        animType: AnimType.BOTTOMSLIDE,
+        title: 'Failed',
+        desc: info,
+        btnOkOnPress: () {}
+    )
+      ..show();
   }
 
   _writeDialog(String order) {
-    String content =
-        'Please use NFC to connect Canokey.We are adding new account now.';
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Mention!'),
-            content: Text(content),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Start connecting'),
-                color: Colors.red,
-                onPressed: () async {
-                  NFCTag tag = await FlutterNfcKit.poll();
-                  String re1 = await FlutterNfcKit.transceive(
-                      '00A4040007A0000005272101');
-                  print(re1);
-                  if (re1 == '9000') {
-                    String re2 = await FlutterNfcKit.transceive(order);
-                    print(re2);
-                    if (re2 == '9000') {
-                      Navigator.pop(context);
-                      _successDialog();
-                    }
-                  }
-                  sleep(new Duration(seconds: 1));
-                  await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
-                },
-              ),
-              FlatButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        });
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.INFO,
+      animType: AnimType.BOTTOMSLIDE,
+      title: 'Mention!',
+      desc: 'Please use NFC to connect Canokey.We are adding new account now.',
+      btnCancelOnPress: () {},
+      btnOkOnPress: () async {
+        await FlutterNfcKit.poll();
+        String re1 = await FlutterNfcKit.transceive(
+            '00A4040007A0000005272101');
+        print(re1);
+        if (re1 == '9000') {
+          String re2 = await FlutterNfcKit.transceive(order);
+          print(re2);
+          if (re2 == '9000') {
+            _successDialog('Add Account Successfully.');
+          }
+          else {
+            _failedDialog(
+                'Something Went Wrong!Please Try Again.Maybe This Account Has Been Added Before?');
+          }
+        }
+        else {
+          _failedDialog(
+              'Something Went Wrong!Please Try Again.The Connection Went Wrong.');
+        }
+        sleep(new Duration(seconds: 1));
+        await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
+      },
+      btnOkText: 'Start Connecting',
+    )
+      ..show();
+//    String content =
+//        'Please use NFC to connect Canokey.We are adding new account now.';
+//    showDialog(
+//        context: context,
+//        builder: (context) {
+//          return AlertDialog(
+//            title: Text('Mention!'),
+//            content: Text(content),
+//            actions: <Widget>[
+//              FlatButton(
+//                child: Text('Start connecting'),
+//                color: Colors.red,
+//                onPressed: () async {
+//                  NFCTag tag = await FlutterNfcKit.poll();
+//                  String re1 = await FlutterNfcKit.transceive(
+//                      '00A4040007A0000005272101');
+//                  print(re1);
+//                  if (re1 == '9000') {
+//                    String re2 = await FlutterNfcKit.transceive(order);
+//                    print(re2);
+//                    if (re2 == '9000') {
+//                      Navigator.pop(context);
+//                      _successDialog('Add Account Successfully.');
+//                    }
+//                  }
+//                  sleep(new Duration(seconds: 1));
+//                  await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
+//                },
+//              ),
+//              FlatButton(
+//                child: Text('Cancel'),
+//                onPressed: () {
+//                  Navigator.pop(context);
+//                },
+//              )
+//            ],
+//          );
+//        });
   }
 
   _alertDialog() {
-    showDialog(
+    AwesomeDialog(
         context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Mention!'),
-            content: Text('Credentials are null!'),
-            actions: <Widget>[
-              FlatButton(
-                color: Colors.red,
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        });
+        headerAnimationLoop: false,
+        dialogType: DialogType.WARNING,
+        animType: AnimType.BOTTOMSLIDE,
+        title: 'Mention!',
+        desc: 'Credentials are null!',
+        btnOkOnPress: () {}
+    )
+      ..show();
   }
 
   _addDialog() {
@@ -325,38 +351,31 @@ class _PassWordsModuleState extends State<PassWordsModule> {
                     child: Text('OK'),
                     color: Colors.red,
                     onPressed: () async {
-                      print(
-                          'name:${_name.text},key:${_key
-                              .text},type:$groupValue');
+                      print('name:${_name.text},key:${_key
+                          .text},type:$groupValue');
                       String typeAndalgorithm,
                           nameInutf8 = '';
                       if (groupValue == 0)
                         typeAndalgorithm = '11';
                       else
-                        typeAndalgorithm = '22';
+                        typeAndalgorithm = '21';
                       var intList = utf8.encode(_name.text);
                       for (int i = 0; i < intList.length; i++) {
                         nameInutf8 += intList[i].toRadixString(16);
                       }
-                      String key = typeAndalgorithm +
-                          '06' +
+                      String key = typeAndalgorithm + '06' +
                           base32.decodeAsHexString(_key.text);
-                      int datalen = 2 +
-                          (nameInutf8.length / 2).floor() +
-                          2 +
+                      int datalen = 2 + (nameInutf8.length / 2).floor() + 2 +
                           (key.length / 2).floor();
                       String nameLength = (nameInutf8.length / 2)
                           .floor()
                           .toRadixString(16)
                           .padLeft(2, '0');
-                      String keyLength = (key.length / 2)
-                          .floor()
-                          .toRadixString(16)
-                          .padLeft(2, '0');
-                      String dataLength =
-                      datalen.toRadixString(16).padLeft(2, '0');
-                      String order =
-                          '00010000${dataLength}71${nameLength}${nameInutf8}73${keyLength}${key}';
+                      String keyLength = (key.length / 2).floor().toRadixString(
+                          16).padLeft(2, '0');
+                      String dataLength = datalen.toRadixString(16).padLeft(
+                          2, '0');
+                      String order = '00010000${dataLength}71${nameLength}${nameInutf8}73${keyLength}${key}';
                       print(order);
                       await FlutterNfcKit.poll();
                       String re1 = await FlutterNfcKit.transceive(
@@ -367,7 +386,7 @@ class _PassWordsModuleState extends State<PassWordsModule> {
                         print(re2);
                         if (re2 == '9000') {
                           Navigator.pop(context);
-                          _successDialog();
+                          _successDialog('Add Account Successfully.');
                         }
                       }
                       sleep(new Duration(seconds: 1));
@@ -385,90 +404,6 @@ class _PassWordsModuleState extends State<PassWordsModule> {
             },
           );
         });
-  }
-
-  _pinDialog(){
-    TextEditingController _pin = TextEditingController();
-    String retry='';Color retryColor=Colors.black;
-    showDialog(
-        context: context,
-        builder: (context){
-          return StatefulBuilder(
-            builder: (context,state){
-              return AlertDialog(
-                  title: Text('Input Pin:'),
-                  content: Container(
-                    child: Column(
-                      children: <Widget>[
-                        TextField(
-                          controller: _pin,
-                          autofocus: false,
-                        ),
-                        SizedBox(height: 25,),
-                        Text('retry chance: ${retry}',style: TextStyle(color:retryColor ),)
-                      ],
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                    ),
-                    height: 125,
-                    width: 300,
-                  ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text('OK'),
-                    color: Colors.red,
-                    onPressed: () async {
-                      await FlutterNfcKit.poll();
-                      String re1 = await FlutterNfcKit.transceive('00A4040005F000000000');
-                      print(re1);
-                      if (re1 == '9000') {
-                        String pinCode='';
-                        var encodeList=utf8.encode(_pin.text);
-                        print(encodeList);
-                        for (int i=0;i<encodeList.length;i++){
-                          pinCode+=encodeList[i].toRadixString(16).padLeft(2,'0');
-                        }
-                        print('pincode: $pinCode');
-                        String pinLen=(pinCode.length/2).round().toRadixString(16).padLeft(2,'0');
-                        String re2 = await FlutterNfcKit.transceive('00200000$pinLen$pinCode');
-                        print('00200000$pinLen$pinCode');
-                        print(re2);
-                        if (re2 == '9000') {
-                          enableCanokey=true;
-                          Navigator.pop(context);
-                          _successDialog();
-                          refresh();
-                        }
-                        else if (RegExp(r"63C\d{1}$").hasMatch(re2) == true){
-                          state((){
-                            retry='retry chance: '+re2[3];
-                            if(re2[3]=='retry chance: 2')retryColor=Colors.yellow;
-                            else if(re2[3]=='retry chance: 1')retryColor=Colors.red;
-                          });
-                        }
-                        else if (re2=='6983'){
-                          state(() {
-                            retry='Canokey was locked';
-                            retryColor=Colors.grey;
-                          });
-                        }
-                      }
-                      sleep(new Duration(seconds: 1));
-                      await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
-                    },
-                  ),
-                  FlatButton(
-                    child: Text('Cancel'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  )
-                ],
-              );
-            }
-          );
-        }
-    );
-
   }
 
   String calculateKey(String str) {
@@ -489,7 +424,7 @@ class _PassWordsModuleState extends State<PassWordsModule> {
     }
     print('radix2Result:$radix2result');
     var result = radix2to10(radix2result) % 1000000;
-    return result.toString().padLeft(6,'0');
+    return result.toString().padLeft(6, '0');
   }
 
   int radix2to10(String str) {
@@ -509,43 +444,65 @@ class _PassWordsModuleState extends State<PassWordsModule> {
     return utf8.decode(decodeList);
   }
 
-  void refresh()async{
-      List<String> hotp = new List();
-      List<Map> totp = new List();
-      if (HomeRow.length != 0) HomeRow.removeRange(0, HomeRow.length);
-      await FlutterNfcKit.poll();
-      await FlutterNfcKit.transceive('00A4040007A0000005272101');
-      print('Millisecond: ${DateTime.now().millisecondsSinceEpoch}');
-      int currentTime = (DateTime.now().millisecondsSinceEpoch/1000).round();
-      String challenge = (currentTime / 30).floor().toRadixString(16).padLeft(16, '0');
-      print('challenge: $challenge');
-      String calculateALL = await FlutterNfcKit.transceive('000500000A7408$challenge');
-      while (RegExp(r"9000$").hasMatch(calculateALL) == false) {
-        String moreData = await FlutterNfcKit.transceive('0006000000');
-        calculateALL += moreData;
-      }
-      parseResponse(calculateALL, hotp, totp);
-      print('hotp:$hotp');
-      print('totp:$totp');
-      if(hotp.length==0&&totp.length==0) _alertDialog();
-      else {
-        for (int i = 0; i < hotp.length; i++) {
-          String strName = utf8Decode(hotp[i]);
-          String utf8Name = hotp[i];
-          HomeRow.add(leftScroll(UniqueKey(), this.removeWidget, strName, utf8Name, '* * * * * *', 'HOTP'));
+  refresh() {
+    AwesomeDialog(
+        context: context,
+        headerAnimationLoop: false,
+        dialogType: DialogType.INFO,
+        animType: AnimType.BOTTOMSLIDE,
+        title: 'Mention!',
+        desc: 'Refreshing Credentials Now.Please Connecting To Canokey.',
+        btnOkOnPress: () async {
+          List<String> hotp = new List();
+          List<Map> totp = new List();
+          if (HomeRow.length != 0) HomeRow.removeRange(0, HomeRow.length);
+          await FlutterNfcKit.poll();
+          await FlutterNfcKit.transceive('00A4040007A0000005272101');
+          print('Millisecond: ${DateTime
+              .now()
+              .millisecondsSinceEpoch}');
+          int currentTime = (DateTime
+              .now()
+              .millisecondsSinceEpoch / 1000).round();
+          String challenge = (currentTime / 30).floor()
+              .toRadixString(16)
+              .padLeft(16, '0');
+          print('challenge: $challenge');
+          String calculateALL = await FlutterNfcKit.transceive(
+              '000500000A7408$challenge');
+          while (RegExp(r"9000$").hasMatch(calculateALL) == false) {
+            String moreData = await FlutterNfcKit.transceive('0006000000');
+            calculateALL += moreData;
+          }
+          parseResponse(calculateALL, hotp, totp);
+          print('hotp:$hotp');
+          print('totp:$totp');
+          if (hotp.length == 0 && totp.length == 0)
+            _alertDialog();
+          else {
+            for (int i = 0; i < hotp.length; i++) {
+              String strName = utf8Decode(hotp[i]);
+              String utf8Name = hotp[i];
+              HomeRow.add(leftScroll(
+                  UniqueKey(), this.removeWidget, strName, utf8Name,
+                  '* * * * * *', 'HOTP'));
+            }
+            for (int i = 0; i < totp.length; i++) {
+              String strName = utf8Decode(totp[i]['totpName']);
+              String utf8Name = totp[i]['totpName'];
+              String calResult = calculateKey(totp[i]['totpKey']);
+              HomeRow.add(leftScroll(
+                  UniqueKey(), this.removeWidget, strName, utf8Name, calResult,
+                  'TOTP'));
+            }
+            setState(() {
+              HomeRow;
+            });
+            sleep(new Duration(seconds: 1));
+            await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
+          }
         }
-        for (int i = 0; i < totp.length; i++) {
-          String strName = utf8Decode(totp[i]['totpName']);
-          String utf8Name = totp[i]['totpName'];
-          String calResult = calculateKey(totp[i]['totpKey']);
-          HomeRow.add(leftScroll(UniqueKey(), this.removeWidget, strName, utf8Name, calResult, 'TOTP'));
-        }
-        setState(() {
-          HomeRow;
-        });
-        sleep(new Duration(seconds: 1));
-        await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
-      }
+    )..show();
   }
 
   @override
@@ -554,6 +511,7 @@ class _PassWordsModuleState extends State<PassWordsModule> {
       floatingActionButton: AnimatedFloatingActionButton(
         fabButtons: <Widget>[
           FloatingActionButton(
+            heroTag: null,
             child: Icon(Icons.add),
             onPressed: () {
               setState(() {
@@ -562,26 +520,28 @@ class _PassWordsModuleState extends State<PassWordsModule> {
             },
           ),
           FloatingActionButton(
+            heroTag: null,
             child: Icon(Icons.camera),
             onPressed: () async {
               scan();
             },
           ),
           FloatingActionButton(
+              heroTag: null,
               child: Icon(Icons.refresh),
-              onPressed: (){
+              onPressed: () {
                 refresh();
-              } )
+              })
         ],
         colorStartAnimation: Colors.blue,
         colorEndAnimation: Colors.red,
         animatedIconData: AnimatedIcons.menu_close,
       ),
       body: ListView(
-              children: <Widget>[
-              Column(children: HomeRow,)
-              ],
-            ),
+        children: <Widget>[
+          Column(children: HomeRow,)
+        ],
+      ),
     );
   }
 

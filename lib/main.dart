@@ -6,8 +6,7 @@ import 'DrawerPages/SettingsPage.dart';
 import 'DrawerPages/HelpPage.dart';
 import 'DrawerPages/AboutPage.dart';
 
-
-void main() {
+void main(){
   runApp(MyApp());
 }
 
@@ -16,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return MaterialApp(
-      home: ScaffoldRoute(),
+      home: ScaffoldRoute()
     );
   }
 }
@@ -32,7 +31,6 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
   String accountName = 'Chino';
   bool login = false;
   String loginText = 'Login';
-  String _credential;
   Color loginButtonColor = Colors.green;
   static HomeContent homeContent=new HomeContent();
   static PersonalContent personalContent=new PersonalContent();
@@ -42,18 +40,16 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
     personalContent
   ];
 
-  String get credentialList => _credential;
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
-          //导航栏
           title: Text("Canokey Users Client"),
           actions: <Widget>[
-            //导航栏右侧菜单
-            IconButton(icon: Icon(Icons.share), onPressed: () {}),
-          ],
+            IconButton(
+              icon: Image.asset('lib/Images/CanokeyLogo.png'),
+            ),
+          ]
         ),
         drawer: Drawer(
           child: Column(
@@ -73,25 +69,6 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
                       });
                     },
                   )),
-              Container(
-                //头像
-                height: 160,
-                width: 160,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(160),
-                    border: Border.all(color: Colors.blue, width: 1.0),
-                    image: DecorationImage(
-                        image: AssetImage(
-                            'lib/Images/AccountTest.jpg'),
-                        fit: BoxFit.cover)),
-              ),
-              ListTile(
-                title: Text(
-                  'Account:$accountName',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
               InkWell(
                 child: ListTile(
                   //Settings
@@ -149,34 +126,6 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
                   });
                 },
               ),
-              SizedBox(
-                height: screenSize.height-550,
-              ),
-              InkWell(
-                child: ListTile(
-                  title: Text(
-                    loginText,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  trailing: Icon(
-                    Icons.power_settings_new,
-                    size: 30,
-                    color: loginButtonColor,
-                  ),
-                ),
-                onTap: () {
-                  setState(() {
-                    login = !login;
-                    if (login) {
-                      loginText = 'Quit';
-                      loginButtonColor = Colors.red;
-                    } else {
-                      loginText = 'Login';
-                      loginButtonColor = Colors.green;
-                    }
-                  });
-                },
-              )
             ],
           ),
         ),
@@ -184,12 +133,8 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
         bottomNavigationBar: BottomNavigationBar(
           // 底部导航
           items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-                icon: Icon(Icons.home), title: Text('Home')),
-//            BottomNavigationBarItem(
-//               icon: Icon(Icons.work), title: Text('Work')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.credit_card), title: Text('Credentials')),
+            BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+            BottomNavigationBarItem(icon: Icon(Icons.credit_card), title: Text('Credentials')),
           ],
           currentIndex: widget.selectedIndex,
           fixedColor: Colors.blue,

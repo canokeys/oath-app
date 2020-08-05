@@ -1,10 +1,11 @@
-import 'package:animated_floatactionbuttons/animated_floatactionbuttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Models/CanokeyModule.dart';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
-import 'dart:io'show sleep;
-import 'package:animated_floatactionbuttons/animated_floatactionbuttons.dart';
+import 'dart:io' show sleep;
+import 'package:awesome_dialog/awesome_dialog.dart';
+
 class HomeContent extends StatefulWidget {
   @override
   _HomeContentState createState() => _HomeContentState();
@@ -17,35 +18,50 @@ class _HomeContentState extends State<HomeContent> {
   NFCTag _nfcTag;
   String _result, _canokeyName = 'null', _transceiveInfo;
   List<String> idRepository = new List();
+  List<String> localID= new List(),localStandard= new List(),localName= new List(),localTransceive= new List();
 
-
-  void initState() {
+  @override
+  void initState(){
     super.initState();
-    initPlatformState();
+    _nfcAvailabilityDetect();
+    _loadInfo();
+  }
+
+  _loadInfo()async{
+    final prefs =await SharedPreferences.getInstance();
+    if (prefs.getStringList('id')!=null) {
+      localID=prefs.getStringList('id');
+      localStandard=prefs.getStringList('standard');
+      localName=prefs.getStringList('name');
+      localTransceive=prefs.getStringList('transceive');
+      for (int i = 0; i < localID.length; i++) {
+        CanokeysRow.add(CanokeyModule(
+            UniqueKey(),
+            this.removeWidget,
+            localID[i],
+            'Canokey',
+            localStandard[i],
+            localName[i],
+            localTransceive[i]));
+      }
+    }
   }
 
   _alertDialog(String info) {
-    showDialog(
+    AwesomeDialog(
         context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Mention!'),
-            content: Text(info),
-            actions: <Widget>[
-              FlatButton(
-                color: Colors.red,
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        });
+        headerAnimationLoop: false,
+        dialogType: DialogType.WARNING,
+        animType: AnimType.BOTTOMSLIDE,
+        title: 'Mention!',
+        desc: info,
+        btnOkOnPress: () {}
+    )..show();
   }
 
- _inputAndCreate() async {
+  _inputAndCreate() async{
     TextEditingController _controller = TextEditingController();
+    final prefs=await SharedPreferences.getInstance();
     var tmpName = await showDialog(
         context: context,
         builder: (context) {
@@ -88,10 +104,24 @@ class _HomeContentState extends State<HomeContent> {
       idRepository.add(_nfcTag.id);
       CanokeysRow.add(CanokeyModule(UniqueKey(), this.removeWidget, _nfcTag?.id,
           'Canokey', _nfcTag?.standard, _canokeyName, _transceiveInfo));
+      Map info={
+        "nfcid":_nfcTag.id,
+        "nfcstandard":_nfcTag.standard,
+        "name":_canokeyName,
+        "transceive":_transceiveInfo
+      };
+      localID.add(_nfcTag.id);
+      localStandard.add(_nfcTag.standard);
+      localName.add(_canokeyName);
+      localTransceive.add(_transceiveInfo);
+      prefs.setStringList('id', localID);
+      prefs.setStringList('standard', localStandard);
+      prefs.setStringList('name', localName);
+      prefs.setStringList('transceive', localTransceive);
     });
   }
 
- initPlatformState() async {
+  _nfcAvailabilityDetect() async {
     NFCAvailability availability;
     try {
       availability = await FlutterNfcKit.nfcAvailability;
@@ -114,49 +144,35 @@ class _HomeContentState extends State<HomeContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: AnimatedFloatingActionButton(
-        fabButtons: <Widget>[
-          FloatingActionButton(
-            child: Icon(Icons.cast_connected),
-            onPressed: () async {
-                try {
-                  NFCTag tag = await FlutterNfcKit.poll();
-                  setState(() {
-                    _nfcTag = tag;
-                  });
-                } catch (error) {
-                  setState(() {
-                    _result = 'Error: $error';
-                    _alertDialog(_result);
-                  });
-                  return;
-                }
-                if (_nfcTag.standard == 'ISO 14443-4 (Type A)') {
-                  _result = await FlutterNfcKit.transceive('00A4040007A0000005272101');
-//            widget._credentialList = await FlutterNfcKit.transceive('0003000000');
-                }
-                int tmpIndex = idRepository.indexOf(_nfcTag.id);
-                if (tmpIndex == -1) {
-                  _inputAndCreate();
-                } else {
-                  _alertDialog('This Canokey has been connected before');
-                }
-                sleep(new Duration(seconds: 1));
-                await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
-              },
-          ),
-          FloatingActionButton(
-            child: Icon(Icons.refresh),
-            onPressed: (){
-              setState(() {
-                initPlatformState();
-              });
-            },
-          )
-        ],
-        colorStartAnimation: Colors.blue,
-        colorEndAnimation: Colors.red,
-        animatedIconData: AnimatedIcons.menu_close,
+      floatingActionButton: FloatingActionButton(
+        heroTag: null,
+        child: Icon(Icons.cast_connected),
+        onPressed: () async {
+          try {
+            NFCTag tag = await FlutterNfcKit.poll();
+            setState(() {
+              _nfcTag = tag;
+            });
+          } catch (error) {
+            setState(() {
+              _result = 'Error: $error';
+              _alertDialog(_result);
+            });
+            return;
+          }
+          if (_nfcTag.standard == 'ISO 14443-4 (Type A)') {
+            _result =
+                await FlutterNfcKit.transceive('00A4040007A0000005272101');
+          }
+          int tmpIndex = idRepository.indexOf(_nfcTag.id);
+          if (tmpIndex == -1) {
+            _inputAndCreate();
+          } else {
+            _alertDialog('This Canokey has been connected before');
+          }
+          sleep(new Duration(seconds: 1));
+          await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
+        },
       ),
       body: ListView(
         padding: EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 10.0),
@@ -174,6 +190,14 @@ class _HomeContentState extends State<HomeContent> {
               Icons.nfc,
               color: nfcAvailabilityColor,
             ),
+            trailing: IconButton(
+              icon: Icon(Icons.refresh),
+              color: Colors.black,
+              onPressed: (){
+                _nfcAvailabilityDetect();
+                setState(() {});
+              },
+            ),
           ),
           Column(
             children: CanokeysRow,
@@ -183,9 +207,9 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 
-
   void removeWidget(Widget w) {
     int wIndex = CanokeysRow.indexOf(w);
+    print('wIndex:$wIndex\nidRepository:$idRepository');
     CanokeysRow.remove(w);
     idRepository.removeAt(wIndex);
     setState(() {});
