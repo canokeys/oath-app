@@ -1,7 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'DataSave.dart';
 
 // ignore: must_be_immutable
 class CanokeyModule extends StatefulWidget {
@@ -29,21 +29,9 @@ class _CanokeyModuleState extends State<CanokeyModule> {
         title: 'Mention!',
         desc: 'Are you sure to remove this ${widget.type} ?',
         btnOkOnPress: () async {
-          final prefs = await SharedPreferences.getInstance();
-          List<String> localID = prefs.getStringList('id');
-          List<String> localStandard = prefs.getStringList('standard');
-          List<String> localName = prefs.getStringList('name');
-          List<String> localTransceive = prefs.getStringList('transceive');
-          print('Before\nid:$localID\nstandard:$localStandard\nname:$localName\ntransceive:$localTransceive');
-          localID.remove(widget.id);
-          localStandard.remove(widget.standard);
-          localName.remove(widget.canokeyName);
-          localTransceive.remove(widget.transeive);
-          print('After\nid:$localID\nstandard:$localStandard\nname:$localName\ntransceive:$localTransceive');
-          prefs.setStringList('id', localID);
-          prefs.setStringList('standard', localStandard);
-          prefs.setStringList('name', localName);
-          prefs.setStringList('transceive', localTransceive);
+          DataBase dataBase = await Functions.loadDataBase(DataBase.filename);
+          dataBase.removeDataById(widget.id);
+          Functions.writeDataBase(DataBase.filename, dataBase);
           widget._callback(this.widget);
         },
         btnCancelOnPress: () {})

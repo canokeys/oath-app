@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../Models/CanokeyModule.dart';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
 import 'dart:io' show sleep;
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:canaokey/Models/DataSave.dart';
 
 class HomeContent extends StatefulWidget {
   @override
@@ -19,6 +19,7 @@ class _HomeContentState extends State<HomeContent> {
   String _result, _canokeyName = 'null', _transceiveInfo;
   List<String> idRepository = new List();
   List<String> localID= new List(),localStandard= new List(),localName= new List(),localTransceive= new List();
+  DataBase database;
 
   @override
   void initState(){
@@ -28,23 +29,8 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   _loadInfo()async{
-    final prefs =await SharedPreferences.getInstance();
-    if (prefs.getStringList('id')!=null) {
-      localID=prefs.getStringList('id');
-      localStandard=prefs.getStringList('standard');
-      localName=prefs.getStringList('name');
-      localTransceive=prefs.getStringList('transceive');
-      for (int i = 0; i < localID.length; i++) {
-        CanokeysRow.add(CanokeyModule(
-            UniqueKey(),
-            this.removeWidget,
-            localID[i],
-            'Canokey',
-            localStandard[i],
-            localName[i],
-            localTransceive[i]));
-      }
-    }
+    database = await Functions.loadDataBase(DataBase.filename);
+    CanokeysRow = database.database.map((data) => CanokeyModule(UniqueKey(), this.removeWidget, data.id, 'CanoKey', data.standard, data.name, data.transceive)).toList();
   }
 
   _alertDialog(String info) {
@@ -61,64 +47,43 @@ class _HomeContentState extends State<HomeContent> {
 
   _inputAndCreate() async{
     TextEditingController _controller = TextEditingController();
-    final prefs=await SharedPreferences.getInstance();
-    var tmpName = await showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: ListTile(
-              title: Text(
-                'Named your Canokey',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-              leading: Icon(Icons.border_color),
-            ),
-            content: Container(
-              child: TextField(
-                maxLength: 15,
+    AwesomeDialog(
+      context: context,
+      headerAnimationLoop: false,
+      dialogType: DialogType.INFO,
+      animType: AnimType.BOTTOMSLIDE,
+      title: 'Input',
+      body: Column(
+        children: <Widget>[
+          Text('Named your Canokey', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+          Container(
+            child:
+              TextField(
+                maxLength: 24,
                 controller: _controller,
                 autofocus: false,
               ),
-              height: 50,
-              width: 200,
-//                alignment: Alignment.center,
-            ),
-            actions: <Widget>[
-              FlatButton(
-                color: Colors.red,
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.pop(context, _controller.text.toString());
-                },
-              )
-            ],
-          );
-        });
-    setState(() {
-      if (_result == '9000') {
-        _transceiveInfo = 'Enabled';
-      } else {
-        _transceiveInfo = 'Disabled';
+            height: 50,
+            width: 200,
+           )
+        ],
+      ),
+      btnOkOnPress: (){
+      setState(() {
+        if (_result == '9000') {
+          _transceiveInfo = 'Enabled';
+        } else {
+          _transceiveInfo = 'Disabled';
+        }
+        _canokeyName = _controller.text;
+        idRepository.add(_nfcTag.id);
+        CanokeysRow.add(CanokeyModule(UniqueKey(), this.removeWidget, _nfcTag?.id, 'Canokey', _nfcTag?.standard, _canokeyName, _transceiveInfo));
+        Data newData = Data(_nfcTag.id, _nfcTag.standard, _canokeyName, _transceiveInfo);
+        database.addData(newData);
+        Functions.writeDataBase(DataBase.filename, database);
+      });
       }
-      _canokeyName = tmpName;
-      idRepository.add(_nfcTag.id);
-      CanokeysRow.add(CanokeyModule(UniqueKey(), this.removeWidget, _nfcTag?.id,
-          'Canokey', _nfcTag?.standard, _canokeyName, _transceiveInfo));
-      Map info={
-        "nfcid":_nfcTag.id,
-        "nfcstandard":_nfcTag.standard,
-        "name":_canokeyName,
-        "transceive":_transceiveInfo
-      };
-      localID.add(_nfcTag.id);
-      localStandard.add(_nfcTag.standard);
-      localName.add(_canokeyName);
-      localTransceive.add(_transceiveInfo);
-      prefs.setStringList('id', localID);
-      prefs.setStringList('standard', localStandard);
-      prefs.setStringList('name', localName);
-      prefs.setStringList('transceive', localTransceive);
-    });
+    )..show();
   }
 
   _nfcAvailabilityDetect() async {
@@ -164,7 +129,8 @@ class _HomeContentState extends State<HomeContent> {
             _result =
                 await FlutterNfcKit.transceive('00A4040007A0000005272101');
           }
-          int tmpIndex = idRepository.indexOf(_nfcTag.id);
+          DataBase dataBase = await Functions.loadDataBase(DataBase.filename);
+          int tmpIndex = dataBase.getIndexById(_nfcTag.id);
           if (tmpIndex == -1) {
             _inputAndCreate();
           } else {
@@ -209,9 +175,8 @@ class _HomeContentState extends State<HomeContent> {
 
   void removeWidget(Widget w) {
     int wIndex = CanokeysRow.indexOf(w);
-    print('wIndex:$wIndex\nidRepository:$idRepository');
+    print('wIndex:$wIndex');
     CanokeysRow.remove(w);
-    idRepository.removeAt(wIndex);
     setState(() {});
   }
 }
