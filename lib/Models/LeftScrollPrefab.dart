@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io'show sleep;
 import 'package:flutter/material.dart';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'AppFuncBrowse.dart';
 
 class HelpContent extends StatelessWidget {
   @override
@@ -12,6 +13,21 @@ class HelpContent extends StatelessWidget {
           },
         ),
         title: Text('Help'),
+      ),
+      body: ListView(
+        padding: EdgeInsets.all(30),
+        children: <Widget>[
+          InkWell(
+            child: ListTile(
+              title: Text('APP Instruction',style: TextStyle(fontSize: 24),),
+              leading: Icon(Icons.help,size: 24,),
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => AppFuncBrowse()));
+              },
+            ),
+          )
+        ],
       ),
     );
   }
