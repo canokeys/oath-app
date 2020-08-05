@@ -27,15 +27,9 @@ class ScaffoldRoute extends StatefulWidget {
 }
 
 class _ScaffoldRouteState extends State<ScaffoldRoute> {
-
-  String accountName = 'Chino';
-  bool login = false;
-  String loginText = 'Login';
-  Color loginButtonColor = Colors.green;
   static HomeContent homeContent=new HomeContent();
   static PersonalContent personalContent=new PersonalContent();
   final _pageList = [
-    //点击并加载的页面
     homeContent,
     personalContent
   ];
