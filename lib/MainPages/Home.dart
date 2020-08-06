@@ -1,3 +1,4 @@
+import 'package:canaokey/Models/StreamBuilder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../Models/CanokeyModule.dart';
@@ -39,8 +40,12 @@ class _HomeContentState extends State<HomeContent> {
         headerAnimationLoop: false,
         dialogType: DialogType.WARNING,
         animType: AnimType.BOTTOMSLIDE,
-        title: 'Mention!',
-        desc: info,
+        body:Column(
+          children: <Widget>[
+            Streambuilder('dialog_attention',TextStyle(fontSize: 24)),
+            Streambuilder(info,TextStyle(fontSize: 16))
+          ],
+        ) ,
         btnOkOnPress: () {}
     )..show();
   }
@@ -55,11 +60,11 @@ class _HomeContentState extends State<HomeContent> {
       title: 'Input',
       body: Column(
         children: <Widget>[
-          Text('Named your Canokey', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+          Streambuilder('namedCanokey',TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
           Container(
             child:
               TextField(
-                maxLength: 24,
+                maxLength: 15,
                 controller: _controller,
                 autofocus: false,
               ),
@@ -120,7 +125,7 @@ class _HomeContentState extends State<HomeContent> {
             });
           } catch (error) {
             setState(() {
-              _result = 'Error: $error';
+              _result = 'Error: poll time out';
               _alertDialog(_result);
             });
             return;
@@ -134,7 +139,7 @@ class _HomeContentState extends State<HomeContent> {
           if (tmpIndex == -1) {
             _inputAndCreate();
           } else {
-            _alertDialog('This Canokey has been connected before');
+            _alertDialog('detectBefore');
           }
           sleep(new Duration(seconds: 1));
           await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
@@ -144,10 +149,7 @@ class _HomeContentState extends State<HomeContent> {
         padding: EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 10.0),
         children: <Widget>[
           ListTile(
-            title: Text(
-              'Equipment NFC Availability',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
+            title: Streambuilder('NFC_availability',TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             subtitle: Text(
               '$_nfcAvailability',
               style: TextStyle(color: nfcAvailabilityColor),
