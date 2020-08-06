@@ -8,7 +8,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="Canokey client"
+        android:label="Canokey Client"
         android:icon="@mipmap/canokey">
         <activity
             android:name=".MainActivity"

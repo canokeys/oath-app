@@ -1,3 +1,4 @@
+import 'package:canaokey/Models/StreamBuilder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,24 +23,26 @@ class AboutContent extends StatelessWidget {
               Navigator.pop(context);
           },
         ),
-        title: Text('About'),
+        title: Streambuilder('about_page',TextStyle(fontSize: 24)),
       ),
       body:ListView(
         padding: EdgeInsets.all(30),
         children: <Widget>[
           Container(
-            height: 300,
-            width: 250,
+            height: 250,
+            width: 200,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
                 border: Border.all(color: Colors.blue, width: 3),
                 image: DecorationImage(image: AssetImage('lib/Images/Canokey.png'), fit: BoxFit.fitWidth)),
           ),
           SizedBox(height: 25,),
-          Text('Powered by Canokeys',style: TextStyle(fontSize: 24 ,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+          ListTile(
+            title: Streambuilder('powered',TextStyle(fontSize: 24,fontWeight: FontWeight.bold)),
+          ),
           SizedBox(height: 10,),
           ListTile(
-            title: Text('Visit Github: ',style: TextStyle(fontSize: 18 ,fontWeight: FontWeight.bold)),
+            title: Streambuilder('github',TextStyle(fontWeight: FontWeight.bold,fontSize: 18)),
             subtitle: InkWell(
               child:  Text('https://github.com/canokeys/oath-app',style: TextStyle(fontSize: 16,color: Colors.blue)),
               onTap: ()async {
@@ -54,7 +57,7 @@ class AboutContent extends StatelessWidget {
             leading: Icon(Icons.web),
           ),
           ListTile(
-            title: Text('Email:',style: TextStyle(fontSize: 18 ,fontWeight: FontWeight.bold)),
+            title: Streambuilder('email',TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
             subtitle: InkWell(
               child:  Text('2088083463@qq.com',style: TextStyle(fontSize: 16,color: Colors.blue)),
               onTap:()async{

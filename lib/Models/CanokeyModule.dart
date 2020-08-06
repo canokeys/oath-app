@@ -2,7 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'DataSave.dart';
-
+import 'StreamBuilder.dart';
 // ignore: must_be_immutable
 class CanokeyModule extends StatefulWidget {
   String id, type, standard, canokeyName, transeive;
@@ -26,8 +26,12 @@ class _CanokeyModuleState extends State<CanokeyModule> {
         headerAnimationLoop: false,
         dialogType: DialogType.WARNING,
         animType: AnimType.BOTTOMSLIDE,
-        title: 'Mention!',
-        desc: 'Are you sure to remove this ${widget.type} ?',
+        body: Column(
+          children: <Widget>[
+            Streambuilder('dialog_attention',TextStyle(fontSize: 24)),
+            Streambuilder('dialog_removeConfirm',TextStyle(fontSize: 16))
+          ],
+        ),
         btnOkOnPress: () async {
           DataBase dataBase = await Functions.loadDataBase(DataBase.filename);
           dataBase.removeDataById(widget.id);
@@ -57,15 +61,8 @@ class _CanokeyModuleState extends State<CanokeyModule> {
                     physics: NeverScrollableScrollPhysics(),
                     children: <Widget>[
                       ListTile(
-                        title: Text('Name: ${widget.canokeyName}',
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
-                        subtitle: Text(
-                          'Canokey ID: ${widget.id}',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        title:  Streambuilder('canokey_name',TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.white),widget.canokeyName),
+                        subtitle:Streambuilder('canokey_id',TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: Colors.white),widget.id),
                         trailing: IconButton(
                           icon: Icon(
                             Icons.delete_forever,
@@ -80,16 +77,10 @@ class _CanokeyModuleState extends State<CanokeyModule> {
                       ),
                       SizedBox(height: 10),
                       ListTile(
-                        title: Text(
-                          'Standard: ${widget.standard}',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
+                        title:  Streambuilder('canokey_standard',TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.white),widget.standard),
                       ),
                       ListTile(
-                        title: Text(
-                          'OATH Application: ${widget.transeive}',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
+                        title:  Streambuilder('canokey_OATH',TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.white),widget.transeive),
                       )
                     ],
                   ),

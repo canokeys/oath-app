@@ -1,3 +1,4 @@
+import 'package:canaokey/Models/StreamBuilder.dart';
 import 'package:flutter/material.dart';
 
 class AppFuncBrowse extends StatefulWidget {
@@ -26,6 +27,7 @@ class _AppFuncBrowseState extends State<AppFuncBrowse> {
     }
   }
   Widget _createPageView() {
+    final size=MediaQuery.of(context).size;
     return PageView(
       controller: _pageController,
       onPageChanged: (pageIndex) {
@@ -41,7 +43,13 @@ class _AppFuncBrowseState extends State<AppFuncBrowse> {
           child: Center(
             child:ListView(
               padding: EdgeInsets.fromLTRB(30, 50, 30, 100),
-              children: <Widget>[Image.asset('lib/Images/page1.png',)],
+              children: <Widget>[
+                Container(
+                  width: size.width-40,
+                  height: size.height-70,
+                  child: Image.asset('lib/Images/page1.png'),
+                )
+              ],
             )
           ),
         ),
@@ -49,28 +57,44 @@ class _AppFuncBrowseState extends State<AppFuncBrowse> {
           color: _pageColor,
           child: ListView(
             padding: EdgeInsets.fromLTRB(30, 50, 30, 100),
-            children: <Widget>[Image.asset('lib/Images/page2.png')],
+            children: <Widget>[
+              Container(
+                width: size.width-40,
+                height: size.height-70,
+                child: Image.asset('lib/Images/page2.png'),
+              )
+            ],
           )
         ),
         Container(
           color: _pageColor,
           child: ListView(
             padding: EdgeInsets.fromLTRB(30, 50, 30, 100),
-            children: <Widget>[Image.asset('lib/Images/page3.png')],
+            children: <Widget>[
+              Container(
+                width: size.width-40,
+                height: size.height-70,
+                child: Image.asset('lib/Images/page3.png'),
+              )
+            ],
           )
         ),
         Container(
           color: _pageColor,
           child: ListView(
             padding: EdgeInsets.fromLTRB(30, 50, 30, 100),
-            children: <Widget>[Image.asset('lib/Images/page4.png')],
+            children: <Widget>[ Container(
+              width: size.width-40,
+              height: size.height-70,
+              child: Image.asset('lib/Images/page4.png'),
+            )],
           )
         ),
         Container(
           color: _pageColor,
           child: Center(
             child: RaisedButton(
-              child: Text('Finished'),
+              child: Streambuilder('finished',TextStyle(fontSize: 14)),
               onPressed: () {
                 Navigator.pop(context);
               }

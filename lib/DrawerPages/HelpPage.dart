@@ -1,3 +1,4 @@
+import 'package:canaokey/Models/StreamBuilder.dart';
 import 'package:flutter/material.dart';
 import 'AppFuncBrowse.dart';
 
@@ -12,14 +13,14 @@ class HelpContent extends StatelessWidget {
               Navigator.pop(context);
           },
         ),
-        title: Text('Help'),
+        title: Streambuilder('help_page',TextStyle(fontSize: 24)),
       ),
       body: ListView(
         padding: EdgeInsets.all(30),
         children: <Widget>[
           InkWell(
             child: ListTile(
-              title: Text('APP Instruction',style: TextStyle(fontSize: 24),),
+              title: Streambuilder('instruction',TextStyle(fontSize: 18)),
               leading: Icon(Icons.help,size: 24,),
               onTap: (){
                 Navigator.of(context).push(MaterialPageRoute(
