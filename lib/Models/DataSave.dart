@@ -31,6 +31,23 @@ Future<String> readFromFile(String filename) async {
   }
 }
 
+class Settings{
+  int currentLan;
+  static String filename = "settings";
+
+  Settings({this.currentLan});
+
+  void setCurrentLan(int Lan){
+    currentLan = Lan;
+  }
+
+  Settings.fromJson(Map<String, dynamic> json)
+        :currentLan = json["currentLan"];
+
+  Map<String, dynamic> toJson() => {
+    "currentLan": currentLan
+  };
+}
 
 class Data{
   String id;
@@ -94,6 +111,22 @@ class DataBase{
 
 
 class Functions{
+  static Future<Settings> loadSettings(String filename) async{
+    String jsonString = await readFromFile(filename);
+    Settings settings;
+    try{
+      settings = Settings.fromJson(json.decode(jsonString));
+    } catch(e){
+      print(e);
+      settings = Settings(currentLan: 0);
+    }
+    return settings;
+  }
+
+  static Future<void> writeSettings(String filename, Settings settings) async{
+    await writeToFile(json.encode(settings.toJson()), filename);
+  }
+
   static Future<DataBase> loadDataBase(String filename) async{
     String jsonString = await readFromFile(filename);
     DataBase database;
