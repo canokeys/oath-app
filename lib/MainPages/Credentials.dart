@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import '../Models/KeysModule.dart';
 
+// ignore: must_be_immutable
 class PersonalContent extends StatefulWidget {
-  static String _credentialInfo;
-  void credentialInfoSet(String value){
-    _credentialInfo=value;
-  }
   KeysModule passWordsModule= KeysModule(UniqueKey(), 'Person');
   @override
   _PersonalContentState createState() => _PersonalContentState();

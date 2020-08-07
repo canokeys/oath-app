@@ -13,7 +13,6 @@ class _AppFuncBrowseState extends State<AppFuncBrowse> {
   Color _pageColor=Colors.grey;
   int _pageIndex=0;
   GlobalKey<_AppFuncBrowseState> _pageIndicatorKey = GlobalKey();
-  @override
   _scrollToPreviousPage() {
     if (_pageIndex > 0) {
       _pageController.animateToPage(_pageIndex - 1,

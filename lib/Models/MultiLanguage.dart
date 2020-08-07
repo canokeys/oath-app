@@ -3,6 +3,7 @@ class LanguagePackage {
   LanguagePackage(this.id);
 }
 
+// ignore: non_constant_identifier_names
 LanguagePackage English = LanguagePackage({
   "app_title": "Canokey Client",
   "home_page": "Home",
@@ -39,9 +40,13 @@ LanguagePackage English = LanguagePackage({
   "github":"Visit Github",
   "finished":"Finished",
   "intruction":"App Instruction",
-  "confirm":"Confirm"
+  "confirm":"Confirm",
+  "connecting":"Keep your Canokey close to your device.Usually,at the back of device.",
+  "poll_timeout":"Connecting failed or time our.Please retry connection.",
+  "refresh_success":"Refreshing succeed!"
 });
 
+// ignore: non_constant_identifier_names
 LanguagePackage Chinese = LanguagePackage({
   "app_title": "Canokey 客户端",
   "home_page": "主页",
@@ -78,9 +83,13 @@ LanguagePackage Chinese = LanguagePackage({
   "github":"访问Github仓库",
   "finished":"完成",
   "instruction":"应用教程",
-  "confirm":"确定"
+  "confirm":"确定",
+  "connecting":"连接您的Canokey。通常情况下，将Canokey靠近设备后侧。",
+  "poll_timeout":"连接失败或超时，请重新尝试连接。",
+  "refresh_success":"成功刷新!"
 });
 
+// ignore: non_constant_identifier_names
 LanguagePackage Japanese = LanguagePackage({
   "app_title": "Canokey クライアント ",
   "home_page": "ホームページ",
@@ -117,7 +126,10 @@ LanguagePackage Japanese = LanguagePackage({
   "github":"Github倉庫にアクセスする",
   "finished":"完成",
   "instruction":"応用教程",
-  "confirm":"オッケー"
+  "confirm":"オッケー",
+  "connecting":"Canokeyを接続します。通常、Canokeyをデバイスの背面に近づけます。",
+  "poll_timeout":"接続に失敗したか、タイムアウトしました。もう一度接続してみてください。",
+  "refresh_success":"正常に更新されました!"
 });
 
 

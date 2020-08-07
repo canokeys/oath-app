@@ -1,9 +1,8 @@
-import 'package:canaokey/MainPages/Personal.dart';
+import 'package:canaokey/MainPages/Credentials.dart';
 import 'package:canaokey/Models/DataSave.dart';
 import 'package:canaokey/Models/StreamBuilder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'MainPages/Home.dart';
 import 'DrawerPages/HelpPage.dart';
 import 'DrawerPages/AboutPage.dart';
 import 'Models/Bloc.dart';
@@ -45,6 +44,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class ScaffoldRoute extends StatefulWidget {
   int selectedIndex = 0;
 
@@ -59,9 +59,7 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
     Language.Japanese
   ];
   int currentLanguage;
-  static HomeContent homeContent = new HomeContent();
   static PersonalContent personalContent = new PersonalContent();
-  final _pageList = [homeContent, personalContent];
 
   @override
   void didChangeDependencies(){
@@ -158,6 +156,7 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
             actions: <Widget>[
               IconButton(
                 icon: Image.asset('lib/Images/CanokeyLogo.png'),
+                onPressed: (){},
               ),
             ]),
         drawer: Drawer(
@@ -225,32 +224,7 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
             ],
           ),
         ),
-        //抽屉
-        bottomNavigationBar: BottomNavigationBar(
-          // 底部导航
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Streambuilder('home_page', TextStyle(fontSize: 14)),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.credit_card),
-              title: Streambuilder('credentials_page', TextStyle(fontSize: 14)),
-            ),
-          ],
-          currentIndex: widget.selectedIndex,
-          fixedColor: Colors.blue,
-          onTap: _onItemTapped,
-        ),
-        body: IndexedStack(
-          index: widget.selectedIndex,
-          children: _pageList,
-        ));
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      widget.selectedIndex = index;
-    });
+        body:personalContent
+    );
   }
 }

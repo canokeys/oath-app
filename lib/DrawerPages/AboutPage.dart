@@ -4,14 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutContent extends StatelessWidget {
-  void _launchURL(String url) async {
-    String url='https://github.com/canokeys/oath-app';
-    if(await canLaunch(url)) {
-      await launch(url);
-    } else {
-      print('Could not launch');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

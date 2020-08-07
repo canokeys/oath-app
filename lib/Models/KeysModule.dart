@@ -1,17 +1,20 @@
 import 'dart:math';
+import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:canaokey/Models/LeftScrollPrefab.dart';
+import 'package:flutter/services.dart';
 import 'dart:io' show sleep;
 import 'dart:convert';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
-import 'package:animated_floatactionbuttons/animated_floatactionbuttons.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:base32/base32.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'StreamBuilder.dart';
 
+// ignore: must_be_immutable
 class KeysModule extends StatefulWidget {
   String heroTag;
 
@@ -23,7 +26,11 @@ class KeysModule extends StatefulWidget {
 
 class _KeysModuleState extends State<KeysModule> {
   bool enableCanokey = false;
+  // ignore: non_constant_identifier_names
   var HomeRow = <Widget>[];
+  NFCAvailability _nfcAvailability = NFCAvailability.not_supported;
+  MaterialColor nfcAvailabilityColor = Colors.green;
+  int _bottomIndex=1;
 
   List<String> parseData(String credentialList) {
     RegExp _regexp = RegExp(r"(71\w*?7502\w{4})");
@@ -120,21 +127,22 @@ class _KeysModuleState extends State<KeysModule> {
         counterData += int.parse(regResult['counter'], radix: 16).toString();
         print(counterData);
         order +=
-            '${dataLen}71${nameLen}${accountName}73${keyLen}${otpType}06${key}7A04${counterData}';
+            '${dataLen}71$nameLen$accountName}73$keyLen${otpType}06${key}7A04$counterData';
       } else {
         order +=
-            '${dataLen}71${nameLen}${accountName}73${keyLen}${otpType}06${key}';
+            '${dataLen}71$nameLen${accountName}73$keyLen${otpType}06$key';
       }
       print(order);
       _writeDialog(order);
     } else {
       otpType = '21';
       order +=
-          '${dataLen}71${nameLen}${accountName}73${keyLen}${otpType}06${key}';
+          '${dataLen}71$nameLen${accountName}73$keyLen${otpType}06$key';
       print(order);
       _writeDialog(order);
     }
   }
+
 
   int _hexToInt(String hex) {
     int val = 0;
@@ -204,19 +212,50 @@ class _KeysModuleState extends State<KeysModule> {
       ),
       btnCancelOnPress: () {},
       btnOkOnPress: () async {
-        await FlutterNfcKit.poll();
-        String re1 = await FlutterNfcKit.transceive('00A4040007A0000005272101');
-        print(re1);
-        if (re1 == '9000') {
-          String re2 = await FlutterNfcKit.transceive(order);
-          print(re2);
-          if (re2 == '9000') {
-            _successDialog('result_success');
+        var _loading=AwesomeDialog(
+          context: context,
+          headerAnimationLoop: false,
+          dialogType: DialogType.INFO,
+          animType: AnimType.BOTTOMSLIDE,
+          padding: EdgeInsets.all(10),
+          body: Column(
+            children: <Widget>[
+              Streambuilder('dialog_attention', TextStyle(fontSize: 24,fontWeight: FontWeight.bold)),
+              Streambuilder('connecting', TextStyle(fontSize: 16)),
+              LoadingBouncingGrid.circle()
+            ],
+          ),
+        );
+        _loading.show();
+        try{
+          await FlutterNfcKit.poll();
+          String re1 = await FlutterNfcKit.transceive('00A4040007A0000005272101');
+          print(re1);
+          if (re1 == '9000') {
+            String re2 = await FlutterNfcKit.transceive(order);
+            print(re2);
+            if (re2 == '9000') {
+              setState(() {
+                _loading.dissmiss();
+              });
+              _successDialog('result_success');
+            } else {
+              setState(() {
+                _loading.dissmiss();
+              });
+              _failedDialog('result_Addfailed');
+            }
           } else {
-            _failedDialog('result_Addfailed');
+            setState(() {
+              _loading.dissmiss();
+            });
+            _failedDialog('result_Confailed');
           }
-        } else {
-          _failedDialog('result_Confailed');
+        }catch(e){
+          setState(() {
+            _loading.dissmiss();
+          });
+          _failedDialog('poll_timeout');
         }
         sleep(new Duration(seconds: 1));
         await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
@@ -310,19 +349,43 @@ class _KeysModuleState extends State<KeysModule> {
               (key.length / 2).floor().toRadixString(16).padLeft(2, '0');
           String dataLength = datalen.toRadixString(16).padLeft(2, '0');
           String order =
-              '00010000${dataLength}71${nameLength}${nameInutf8}73${keyLength}${key}';
+              '00010000${dataLength}71$nameLength${nameInutf8}73$keyLength$key';
           print(order);
-          await FlutterNfcKit.poll();
-          String re1 =
-              await FlutterNfcKit.transceive('00A4040007A0000005272101');
-          print(re1);
-          if (re1 == '9000') {
-            String re2 = await FlutterNfcKit.transceive(order);
-            print(re2);
-            if (re2 == '9000') {
-              Navigator.pop(context);
-              _successDialog('result_success');
+          var _loading=AwesomeDialog(
+            context: context,
+            headerAnimationLoop: false,
+            dialogType: DialogType.INFO,
+            animType: AnimType.BOTTOMSLIDE,
+            padding: EdgeInsets.all(10),
+            body: Column(
+              children: <Widget>[
+                Streambuilder('dialog_attention', TextStyle(fontSize: 24,fontWeight: FontWeight.bold)),
+                Streambuilder('connecting', TextStyle(fontSize: 16)),
+                LoadingBouncingGrid.circle()
+              ],
+            ),
+          );
+          _loading.show();
+          try {
+            await FlutterNfcKit.poll();
+            String re1 = await FlutterNfcKit.transceive(
+                '00A4040007A0000005272101');
+            print(re1);
+            if (re1 == '9000') {
+              String re2 = await FlutterNfcKit.transceive(order);
+              print(re2);
+              if (re2 == '9000') {
+                setState(() {
+                  _loading.dissmiss();
+                });
+                _successDialog('result_success');
+              }
             }
+          }catch(e){
+            setState(() {
+              _loading.dissmiss();
+            });
+            _failedDialog('poll_timeout');
           }
           sleep(new Duration(seconds: 1));
           await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
@@ -383,19 +446,39 @@ class _KeysModuleState extends State<KeysModule> {
           ],
         ),
         btnOkOnPress: () async {
+          var _loading=AwesomeDialog(
+              context: context,
+              headerAnimationLoop: false,
+              dialogType: DialogType.INFO,
+              animType: AnimType.BOTTOMSLIDE,
+              padding: EdgeInsets.all(10),
+              body: Column(
+                children: <Widget>[
+                  Streambuilder('dialog_attention', TextStyle(fontSize: 24,fontWeight: FontWeight.bold)),
+                  Streambuilder('connecting', TextStyle(fontSize: 16)),
+                  LoadingBouncingGrid.circle()
+                ],
+              ),
+          );
+          _loading.show();
           List<String> hotp = new List();
           List<Map> totp = new List();
           if (HomeRow.length != 0) HomeRow.removeRange(0, HomeRow.length);
-          await FlutterNfcKit.poll();
-          await FlutterNfcKit.transceive('00A4040007A0000005272101');
-          print('Millisecond: ${DateTime.now().millisecondsSinceEpoch}');
           int currentTime =
-              (DateTime.now().millisecondsSinceEpoch / 1000).round();
+          (DateTime.now().millisecondsSinceEpoch / 1000).round();
           String challenge =
-              (currentTime / 30).floor().toRadixString(16).padLeft(16, '0');
-          print('challenge: $challenge');
-          String calculateALL =
-              await FlutterNfcKit.transceive('000500000A7408$challenge');
+          (currentTime / 30).floor().toRadixString(16).padLeft(16, '0');
+          String calculateALL;
+          try {
+            await FlutterNfcKit.poll();
+            await FlutterNfcKit.transceive('00A4040007A0000005272101');
+            calculateALL = await FlutterNfcKit.transceive('000500000A7408$challenge');
+          }catch(e){
+            setState(() {
+              _loading.dissmiss();
+            });
+            _failedDialog('poll_timeout');
+          }
           while (RegExp(r"9000$").hasMatch(calculateALL) == false) {
             String moreData = await FlutterNfcKit.transceive('0006000000');
             calculateALL += moreData;
@@ -403,8 +486,12 @@ class _KeysModuleState extends State<KeysModule> {
           parseResponse(calculateALL, hotp, totp);
           print('hotp:$hotp');
           print('totp:$totp');
-          if (hotp.length == 0 && totp.length == 0)
+          if (hotp.length == 0 && totp.length == 0) {
+            setState(() {
+              _loading.dissmiss();
+            });
             _alertDialog();
+          }
           else {
             for (int i = 0; i < hotp.length; i++) {
               String strName = utf8Decode(hotp[i]);
@@ -420,10 +507,9 @@ class _KeysModuleState extends State<KeysModule> {
                   utf8Name, calResult, 'TOTP'));
             }
             setState(() {
-              HomeRow;
+              _loading.dissmiss();
             });
-            sleep(new Duration(seconds: 1));
-            await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
+            _successDialog('refresh_success');
           }
         },
       btnOkText: "Connect"
@@ -431,45 +517,81 @@ class _KeysModuleState extends State<KeysModule> {
       ..show();
   }
 
+
+  void initState(){
+    super.initState();
+    _nfcAvailabilityDetect();
+  }
+
+  _nfcAvailabilityDetect() async {
+    NFCAvailability availability;
+    try {
+      availability = await FlutterNfcKit.nfcAvailability;
+    } on PlatformException {
+      availability = NFCAvailability.not_supported;
+    }
+    if (!mounted) return;
+    setState(() {
+      _nfcAvailability = availability;
+      if (_nfcAvailability == NFCAvailability.available) {
+        nfcAvailabilityColor = Colors.green;
+      } else if (_nfcAvailability == NFCAvailability.not_supported) {
+        nfcAvailabilityColor = Colors.grey;
+      } else {
+        nfcAvailabilityColor = Colors.red;
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: AnimatedFloatingActionButton(
-        fabButtons: <Widget>[
-          FloatingActionButton(
-            heroTag: null,
-            child: Icon(Icons.add),
-            onPressed: () {
-              setState(() {
-                _addDialog();
-              });
-            },
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            child: Icon(Icons.camera),
-            onPressed: () async {
-              scan();
-            },
-          ),
-          FloatingActionButton(
-              heroTag: null,
-              child: Icon(Icons.refresh),
-              onPressed: () {
-                refresh();
-              })
-        ],
-        colorStartAnimation: Colors.blue,
-        colorEndAnimation: Colors.red,
-        animatedIconData: AnimatedIcons.menu_close,
-      ),
       body: ListView(
         children: <Widget>[
+          SizedBox(height: 10,),
+          ListTile(
+            title: Streambuilder('NFC_availability',TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            subtitle: Text(
+              '$_nfcAvailability',
+              style: TextStyle(color: nfcAvailabilityColor),
+            ),
+            leading: Icon(
+              Icons.nfc,
+              color: nfcAvailabilityColor,
+            ),
+            trailing: IconButton(
+              icon: Icon(Icons.refresh),
+              color: Colors.black,
+              onPressed: (){
+                _nfcAvailabilityDetect();
+                setState(() {});
+              },
+            ),
+          ),
           Column(
             children: HomeRow,
           )
         ],
       ),
+      bottomNavigationBar:AnimatedBottomNavigationBar(
+        icons: [
+          Icons.add,Icons.camera,Icons.refresh,
+        ],
+        iconSize: 28,
+        leftCornerRadius: 25,
+        rightCornerRadius: 25,
+        height: 75,
+        activeColor: Colors.blue,
+        splashColor: Colors.blue,
+        activeIndex: _bottomIndex,
+        onTap: (index){
+          if(index==0)_addDialog();
+          else if (index==1) scan();
+          else refresh();
+          setState(() {
+            _bottomIndex=index;
+          });
+        },
+      )
     );
   }
 
