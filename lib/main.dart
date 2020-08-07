@@ -1,4 +1,5 @@
 import 'package:canaokey/MainPages/Personal.dart';
+import 'package:canaokey/Models/DataSave.dart';
 import 'package:canaokey/Models/StreamBuilder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +10,11 @@ import 'Models/Bloc.dart';
 
 class LanBloc extends InheritedWidget {
   final LanguageBloc bloc;
+  final Settings settings;
 
   const LanBloc(
-    this.bloc, {
+    this.bloc,this.settings,
+      {
     Key key,
     @required Widget child,
   })  : assert(child != null),
@@ -27,10 +30,11 @@ class LanBloc extends InheritedWidget {
   }
 }
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   LanguageBloc bloc = LanguageBloc();
-  runApp(LanBloc(bloc, child: MyApp()));
+  Settings settings = await Functions.loadSettings(Settings.filename);
+  runApp(LanBloc(bloc, settings, child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -54,10 +58,18 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
     Language.Chinese,
     Language.Japanese
   ];
-  int currentLanguage = 0;
+  int currentLanguage;
   static HomeContent homeContent = new HomeContent();
   static PersonalContent personalContent = new PersonalContent();
   final _pageList = [homeContent, personalContent];
+
+  @override
+  void didChangeDependencies(){
+    setState(() {
+      currentLanguage = LanBloc.of(context).settings.currentLan;
+    });
+    super.didChangeDependencies();
+  }
 
   radioDialog() {
     showDialog(
@@ -67,7 +79,7 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
             return AlertDialog(
                 content: Container(
               height: 300,
-              child: ListView(
+              child: Column(
                 children: <Widget>[
                   Row(
                     children: <Widget>[
@@ -126,6 +138,8 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
                           .bloc
                           .languageSink
                           .add(languages[currentLanguage]);
+                      LanBloc.of(context).settings.setCurrentLan(currentLanguage);
+                      Functions.writeSettings(Settings.filename, LanBloc.of(context).settings);
                       Navigator.pop(context);
                     },
                   )

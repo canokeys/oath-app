@@ -1,6 +1,6 @@
-# Canokey
+# Canokey Client
 
-A new Flutter application.
+A Flutter Application,both support Android and IOS.This app is written for Canokey.
 
 ## Getting Started
 
