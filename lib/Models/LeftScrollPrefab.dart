@@ -9,15 +9,17 @@ import 'dart:math';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'StreamBuilder.dart';
 
+// ignore: must_be_immutable, camel_case_types
 class leftScroll extends StatefulWidget {
   Function callback;
   String text = 'null';
   String oneTimePassword;
   String nameInUtf8;
+  // ignore: non_constant_identifier_names
   String Type;
   String calculateOrder;
 
-  leftScroll(Key key, @required this.callback, this.text, this.nameInUtf8,
+  leftScroll(Key key, this.callback, this.text, this.nameInUtf8,
       this.oneTimePassword, this.Type)
       : super(key: key);
 
@@ -25,6 +27,7 @@ class leftScroll extends StatefulWidget {
   _leftScrollState createState() => _leftScrollState();
 }
 
+// ignore: camel_case_types
 class _leftScrollState extends State<leftScroll> {
   AsyncSnapshot<LanguagePackage> snapshot = new AsyncSnapshot.nothing();
 

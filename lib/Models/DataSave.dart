@@ -15,11 +15,13 @@ Future<File> _localFile(String filename) async {
   return File(join(path, filename));
 }
 
+// ignore: missing_return
 Future<File> writeToFile(String data, String filename) async {
   final file = await _localFile(filename);
   file.writeAsString(data);
 }
 
+// ignore: missing_return
 Future<String> readFromFile(String filename) async {
   try{
     final file = await _localFile(filename);
@@ -37,6 +39,7 @@ class Settings{
 
   Settings({this.currentLan});
 
+  // ignore: non_constant_identifier_names
   void setCurrentLan(int Lan){
     currentLan = Lan;
   }
@@ -55,8 +58,7 @@ class Data{
   String name;
   String transceive;
 
-  Data(this.id, this.standard, this.name, this.transceive){}
-
+  Data(this.id, this.standard, this.name, this.transceive);
   Data.fromJson(Map<String, dynamic> json)
         :id = json["id"],
         standard = json["standard"],
@@ -134,7 +136,7 @@ class Functions{
       database = DataBase.loadFromJson(jsonString);
     } catch(e){
       database = DataBase([]);
-    };
+    }
     return database;
   }
 

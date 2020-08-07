@@ -16,6 +16,7 @@ class LanguageBloc{
   final _languagePackageObject = BehaviorSubject<LanguagePackage>();
   Stream<LanguagePackage> get languageStream => _languagePackageObject.stream;
 
+  // ignore: close_sinks
   final _switchSubject = StreamController<Language>();
   Sink<Language> get languageSink => _switchSubject.sink;
 

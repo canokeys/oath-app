@@ -39,6 +39,8 @@ dependencies:
   path:
   path_provider:
   rxdart:
+  animated_bottom_navigation_bar:
+  loading_animations:
 
 dev_dependencies:
   flutter_test:

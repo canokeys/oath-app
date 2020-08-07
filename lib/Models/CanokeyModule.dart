@@ -9,8 +9,8 @@ class CanokeyModule extends StatefulWidget {
   Function _callback;
   int recentVolume = 0, totalVolume = 0;
 
-  CanokeyModule(Key key, @required this._callback, String this.id,
-      String this.type, this.standard, this.canokeyName, this.transeive)
+  CanokeyModule(Key key, this._callback, this.id,
+      this.type, this.standard, this.canokeyName, this.transeive)
       : super(key: key);
 
   @override
