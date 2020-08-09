@@ -1,5 +1,6 @@
 import 'package:canaokey/MainPages/Credentials.dart';
 import 'package:canaokey/Models/DataSave.dart';
+import 'package:canaokey/Models/KeysModule.dart';
 import 'package:canaokey/Models/StreamBuilder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,13 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
     Language.Japanese
   ];
   int currentLanguage;
-  static PersonalContent personalContent = new PersonalContent();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+//    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {Future.delayed(Duration(seconds:1), () => Navigator.push(context, MaterialPageRoute(builder: (context) => HelpContent())));});
+    super.initState();
+  }
 
   @override
   void didChangeDependencies(){
@@ -224,7 +231,7 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
             ],
           ),
         ),
-        body:personalContent
+        body:KeysModule(UniqueKey(), 'Person')
     );
   }
 }
