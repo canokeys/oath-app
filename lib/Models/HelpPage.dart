@@ -61,7 +61,7 @@ class HelpPage {
     tutorialCoachMark = TutorialCoachMark(
       context,
       targets: LanguageBloc.targets,
-      colorShadow: Colors.red,
+      colorShadow: Colors.lightBlueAccent,
       alignSkip: Alignment.topLeft,
       textSkip: "SKIP",
       textStyleSkip: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
