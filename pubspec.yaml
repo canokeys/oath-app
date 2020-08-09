@@ -41,6 +41,7 @@ dependencies:
   rxdart:
   animated_bottom_navigation_bar:
   loading_animations:
+  tutorial_coach_mark:
 
 dev_dependencies:
   flutter_test:

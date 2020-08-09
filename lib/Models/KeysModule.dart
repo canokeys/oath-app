@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:canaokey/Models/Bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:canaokey/Models/LeftScrollPrefab.dart';
@@ -559,7 +560,7 @@ class _KeysModuleState extends State<KeysModule> {
               color: nfcAvailabilityColor,
             ),
             trailing: IconButton(
-              icon: Icon(Icons.refresh),
+              icon: Icon(Icons.refresh, key: LanguageBloc.key1,),
               color: Colors.black,
               onPressed: (){
                 _nfcAvailabilityDetect();
@@ -572,26 +573,45 @@ class _KeysModuleState extends State<KeysModule> {
           )
         ],
       ),
-      bottomNavigationBar:AnimatedBottomNavigationBar(
-        icons: [
-          Icons.add,Icons.camera,Icons.refresh,
-        ],
-        iconSize: 28,
-        leftCornerRadius: 25,
-        rightCornerRadius: 25,
-        height: 75,
-        activeColor: Colors.blue,
-        splashColor: Colors.blue,
-        activeIndex: _bottomIndex,
-        onTap: (index){
-          if(index==0)_addDialog();
-          else if (index==1) scan();
-          else refresh();
-          setState(() {
-            _bottomIndex=index;
-          });
-        },
-      )
+        bottomNavigationBar: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(title: Text(""), icon: Icon(Icons.add, key: LanguageBloc.key2,)),
+            BottomNavigationBarItem(title: Text(""), icon: Icon(Icons.camera, key: LanguageBloc.key3,)),
+            BottomNavigationBarItem(title: Text(""), icon: Icon(Icons.refresh, key: LanguageBloc.key4)),
+          ],
+          currentIndex: _bottomIndex,
+          onTap: (index) {
+            if (index == 0)
+              _addDialog();
+            else if (index == 1)
+              scan();
+            else
+              refresh();
+            setState(() {
+              _bottomIndex = index;
+            });
+          }
+        ),
+//      bottomNavigationBar:AnimatedBottomNavigationBar(
+//        icons: [
+//          Icons.add,Icons.camera,Icons.refresh,
+//        ],
+//        iconSize: 28,
+//        leftCornerRadius: 25,
+//        rightCornerRadius: 25,
+//        height: 75,
+//        activeColor: Colors.blue,
+//        splashColor: Colors.blue,
+//        activeIndex: _bottomIndex,
+//        onTap: (index){
+//          if(index==0)_addDialog();
+//          else if (index==1) scan();
+//          else refresh();
+//          setState(() {
+//            _bottomIndex=index;
+//          });
+//        },
+//      )
     );
   }
 

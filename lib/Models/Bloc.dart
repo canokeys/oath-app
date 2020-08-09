@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:canaokey/Models/DataSave.dart';
 import 'package:canaokey/Models/MultiLanguage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tutorial_coach_mark/target_focus.dart';
 
 enum Language{
   English,
@@ -12,6 +14,12 @@ enum Language{
 
 
 class LanguageBloc{
+  static List<TargetFocus> targets = List<TargetFocus>();
+  static GlobalKey key1 = GlobalKey();
+  static GlobalKey key2 = GlobalKey();
+  static GlobalKey key3 = GlobalKey();
+  static GlobalKey key4 = GlobalKey();
+
   final languagePackages = [English, Chinese, Japanese];
   final _languagePackageObject = BehaviorSubject<LanguagePackage>();
   Stream<LanguagePackage> get languageStream => _languagePackageObject.stream;

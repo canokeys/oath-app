@@ -35,20 +35,27 @@ Future<String> readFromFile(String filename) async {
 
 class Settings{
   int currentLan;
+  bool flag;
   static String filename = "settings";
 
-  Settings({this.currentLan});
+  Settings({this.currentLan, this.flag});
 
   // ignore: non_constant_identifier_names
   void setCurrentLan(int Lan){
     currentLan = Lan;
   }
 
+  void setFlag(bool _flag){
+    flag = _flag;
+  }
+
   Settings.fromJson(Map<String, dynamic> json)
-        :currentLan = json["currentLan"];
+        :currentLan = json["currentLan"],
+          flag = json["flag"];
 
   Map<String, dynamic> toJson() => {
-    "currentLan": currentLan
+    "currentLan": currentLan,
+    "flag": flag,
   };
 }
 
@@ -120,7 +127,7 @@ class Functions{
       settings = Settings.fromJson(json.decode(jsonString));
     } catch(e){
       print(e);
-      settings = Settings(currentLan: 0);
+      settings = Settings(currentLan: 0, flag: false);
     }
     return settings;
   }

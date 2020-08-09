@@ -378,6 +378,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.5"
+  tutorial_coach_mark:
+    dependency: "direct main"
+    description:
+      name: tutorial_coach_mark
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.5.0"
   typed_data:
     dependency: transitive
     description:
