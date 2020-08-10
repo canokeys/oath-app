@@ -1,7 +1,6 @@
 import 'dart:async';
-
-import 'package:canaokey/Models/DataSave.dart';
-import 'package:canaokey/Models/MultiLanguage.dart';
+import 'package:canokey/Models/DataSave.dart';
+import 'package:canokey/Models/MultiLanguage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tutorial_coach_mark/target_focus.dart';
@@ -9,7 +8,9 @@ import 'package:tutorial_coach_mark/target_focus.dart';
 enum Language{
   English,
   Chinese,
-  Japanese
+  Japanese,
+  French,
+  German
 }
 
 
@@ -39,6 +40,12 @@ class LanguageBloc{
       }
       else if(language==Language.Japanese){
         _languagePackageObject.add(Japanese);
+      }
+      else if(language==Language.French){
+        _languagePackageObject.add(French);
+      }
+      else if(language==Language.German){
+        _languagePackageObject.add(German);
       }
     });
   }

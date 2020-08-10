@@ -1,9 +1,8 @@
 import 'dart:math';
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:canaokey/Models/Bloc.dart';
+import 'package:canokey/Models/Bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:canaokey/Models/LeftScrollPrefab.dart';
+import 'package:canokey/Models/LeftScrollPrefab.dart';
 import 'package:flutter/services.dart';
 import 'dart:io' show sleep;
 import 'dart:convert';
@@ -14,13 +13,10 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'StreamBuilder.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 // ignore: must_be_immutable
 class KeysModule extends StatefulWidget {
-  String heroTag;
-
-  KeysModule(Key key, this.heroTag) : super(key: key);
-
   @override
   _KeysModuleState createState() => _KeysModuleState();
 }
@@ -32,6 +28,9 @@ class _KeysModuleState extends State<KeysModule> {
   NFCAvailability _nfcAvailability = NFCAvailability.not_supported;
   MaterialColor nfcAvailabilityColor = Colors.green;
   int _bottomIndex=1;
+  List targets=List();
+  TutorialCoachMark tutorialCoachMark;
+  GlobalKey key0=GlobalKey();
 
   List<String> parseData(String credentialList) {
     RegExp _regexp = RegExp(r"(71\w*?7502\w{4})");
@@ -143,7 +142,6 @@ class _KeysModuleState extends State<KeysModule> {
       _writeDialog(order);
     }
   }
-
 
   int _hexToInt(String hex) {
     int val = 0;
@@ -338,8 +336,8 @@ class _KeysModuleState extends State<KeysModule> {
           for (int i = 0; i < intList.length; i++) {
             nameInutf8 += intList[i].toRadixString(16);
           }
-          String key =
-              typeAndalgorithm + '06' + base32.decodeAsHexString(_key.text);
+          print('base32encode:${base32.encodeString(_key.text)}');
+          String key = typeAndalgorithm + '06' + base32.decodeAsHexString(base32.encodeString(_key.text));
           int datalen = 2 +
               (nameInutf8.length / 2).floor() +
               2 +
@@ -349,8 +347,7 @@ class _KeysModuleState extends State<KeysModule> {
           String keyLength =
               (key.length / 2).floor().toRadixString(16).padLeft(2, '0');
           String dataLength = datalen.toRadixString(16).padLeft(2, '0');
-          String order =
-              '00010000${dataLength}71$nameLength${nameInutf8}73$keyLength$key';
+          String order = '00010000${dataLength}71$nameLength${nameInutf8}73$keyLength$key';
           print(order);
           var _loading=AwesomeDialog(
             context: context,
@@ -518,7 +515,6 @@ class _KeysModuleState extends State<KeysModule> {
       ..show();
   }
 
-
   void initState(){
     super.initState();
     _nfcAvailabilityDetect();
@@ -574,6 +570,8 @@ class _KeysModuleState extends State<KeysModule> {
         ],
       ),
         bottomNavigationBar: BottomNavigationBar(
+          iconSize: 30,
+          elevation: 25,
           items: [
             BottomNavigationBarItem(title: Text(""), icon: Icon(Icons.add, key: LanguageBloc.key2,)),
             BottomNavigationBarItem(title: Text(""), icon: Icon(Icons.camera, key: LanguageBloc.key3,)),
@@ -592,26 +590,6 @@ class _KeysModuleState extends State<KeysModule> {
             });
           }
         ),
-//      bottomNavigationBar:AnimatedBottomNavigationBar(
-//        icons: [
-//          Icons.add,Icons.camera,Icons.refresh,
-//        ],
-//        iconSize: 28,
-//        leftCornerRadius: 25,
-//        rightCornerRadius: 25,
-//        height: 75,
-//        activeColor: Colors.blue,
-//        splashColor: Colors.blue,
-//        activeIndex: _bottomIndex,
-//        onTap: (index){
-//          if(index==0)_addDialog();
-//          else if (index==1) scan();
-//          else refresh();
-//          setState(() {
-//            _bottomIndex=index;
-//          });
-//        },
-//      )
     );
   }
 

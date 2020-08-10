@@ -1,4 +1,4 @@
-import 'package:canaokey/Models/StreamBuilder.dart';
+import 'package:canokey/Models/StreamBuilder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,21 +17,20 @@ class AboutContent extends StatelessWidget {
         ),
         title: Streambuilder('about_page',TextStyle(fontSize: 24)),
       ),
-      body:ListView(
-        padding: EdgeInsets.all(30),
+      body:Column(
         children: <Widget>[
+          SizedBox(height: 15,),
           Container(
             height: 250,
-            width: 200,
+            width: 250,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
+                borderRadius: BorderRadius.circular(125),
                 border: Border.all(color: Colors.blue, width: 3),
-                image: DecorationImage(image: AssetImage('lib/Images/Canokey.png'), fit: BoxFit.fitWidth)),
+                color: Colors.white,
+                image: DecorationImage(image: AssetImage('lib/Images/Canokey.png'))),
           ),
           SizedBox(height: 25,),
-          ListTile(
-            title: Streambuilder('powered',TextStyle(fontSize: 24,fontWeight: FontWeight.bold)),
-          ),
+          Streambuilder('powered',TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
           SizedBox(height: 10,),
           ListTile(
             title: Streambuilder('github',TextStyle(fontWeight: FontWeight.bold,fontSize: 18)),
@@ -63,7 +62,6 @@ class AboutContent extends StatelessWidget {
             ),
             leading: Icon(Icons.email),
           ),
-
         ],
       ),
     );
