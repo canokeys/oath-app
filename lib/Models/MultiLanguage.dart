@@ -39,11 +39,15 @@ LanguagePackage English = LanguagePackage({
   "email":"Email",
   "github":"Visit Github",
   "finished":"Finished",
-  "intruction":"App Instruction",
+  "instruction":"App Instruction",
   "confirm":"Confirm",
   "connecting":"Keep your Canokey close to your device.Usually,at the back of device.",
   "poll_timeout":"Connecting failed or time our.Please retry connection.",
-  "refresh_success":"Refreshing succeed!"
+  "refresh_success":"Refreshing succeed!",
+  "refresh_info": "Click here to refresh NFC availability",
+  "bottom_add": "Add New Account By Hand",
+  "bottom_scan": "Open Camera To Scan",
+  "bottom_refresh": "Refresh Credentials"
 });
 
 // ignore: non_constant_identifier_names
@@ -86,7 +90,12 @@ LanguagePackage Chinese = LanguagePackage({
   "confirm":"确定",
   "connecting":"连接您的Canokey。通常情况下，将Canokey靠近设备后侧。",
   "poll_timeout":"连接失败或超时，请重新尝试连接。",
-  "refresh_success":"成功刷新!"
+  "refresh_success":"成功刷新!",
+  //todo: fill chinese
+  "refresh_info":"some chinese refresh info",
+  "bottom_add": "some chinese bottom add",
+  "bottom_scan": " some chinese bottom scan",
+  "bottom_refresh": "some chinese bottom refresh",
 });
 
 // ignore: non_constant_identifier_names
@@ -129,7 +138,12 @@ LanguagePackage Japanese = LanguagePackage({
   "confirm":"オッケー",
   "connecting":"Canokeyを接続します。通常、Canokeyをデバイスの背面に近づけます。",
   "poll_timeout":"接続に失敗したか、タイムアウトしました。もう一度接続してみてください。",
-  "refresh_success":"正常に更新されました!"
+  "refresh_success":"正常に更新されました!",
+  //todo: fill japanese
+  "refresh_info":"some japanese refresh info",
+  "bottom_add": "some japanese bottom add",
+  "bottom_scan": "some japanese bottom scan",
+  "bottom_refresh": "some japanese bottom refresh"
 });
 
 

@@ -1,15 +1,19 @@
 import 'package:canaokey/MainPages/Credentials.dart';
 import 'package:canaokey/Models/DataSave.dart';
+import 'package:canaokey/Models/HelpPage.dart';
+import 'package:canaokey/Models/KeysModule.dart';
 import 'package:canaokey/Models/StreamBuilder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'DrawerPages/HelpPage.dart';
 import 'DrawerPages/AboutPage.dart';
 import 'Models/Bloc.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class LanBloc extends InheritedWidget {
   final LanguageBloc bloc;
   final Settings settings;
+  
 
   const LanBloc(
     this.bloc,this.settings,
@@ -59,7 +63,22 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
     Language.Japanese
   ];
   int currentLanguage;
-  static PersonalContent personalContent = new PersonalContent();
+
+  @override
+  void initState() {
+    HelpPage.initTargets();
+    
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {Future.delayed(Duration(milliseconds: 100), (){
+        if(!LanBloc.of(context).settings.flag){
+        HelpPage.showTutorial(context);
+        LanBloc.of(context).settings.setFlag(true);
+      Functions.writeSettings(Settings.filename, LanBloc.of(context).settings);
+    }
+        });});
+      
+//    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {Future.delayed(Duration(seconds:1), () => Navigator.push(context, MaterialPageRoute(builder: (context) => AppFuncBrowse())));});
+    super.initState();
+  }
 
   @override
   void didChangeDependencies(){
@@ -203,10 +222,12 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
                   ),
                 ),
                 onTap: () {
-                  setState(() {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => HelpContent()));
-                  });
+                  Navigator.pop(context);
+                  HelpPage.showTutorial(context);
+//                  setState(() {
+//                    Navigator.of(context).push(
+//                        MaterialPageRoute(builder: (context) => HelpContent()));
+
                 },
               ),
               InkWell(
@@ -224,7 +245,7 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
             ],
           ),
         ),
-        body:personalContent
+        body:KeysModule(UniqueKey(), 'Person')
     );
   }
 }
