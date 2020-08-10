@@ -1,3 +1,4 @@
+import 'package:canaokey/DrawerPages/AppFuncBrowse.dart';
 import 'package:canaokey/MainPages/Credentials.dart';
 import 'package:canaokey/Models/DataSave.dart';
 import 'package:canaokey/Models/StreamBuilder.dart';
@@ -36,6 +37,7 @@ void main() async {
   runApp(LanBloc(bloc, settings, child: MyApp()));
 }
 
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -60,12 +62,14 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
   ];
   int currentLanguage;
   static PersonalContent personalContent = new PersonalContent();
-
   @override
   void didChangeDependencies(){
     setState(() {
       currentLanguage = LanBloc.of(context).settings.currentLan;
     });
+    if(LanBloc.of(context).settings.flag==false){
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => AppFuncBrowse(false)));
+    }
     super.didChangeDependencies();
   }
 
@@ -132,10 +136,7 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
                         TextStyle(fontSize: 16, color: Colors.white)),
                     color: Colors.green,
                     onPressed: () {
-                      LanBloc.of(context)
-                          .bloc
-                          .languageSink
-                          .add(languages[currentLanguage]);
+                      LanBloc.of(context).bloc.languageSink.add(languages[currentLanguage]);
                       LanBloc.of(context).settings.setCurrentLan(currentLanguage);
                       Functions.writeSettings(Settings.filename, LanBloc.of(context).settings);
                       Navigator.pop(context);
@@ -151,80 +152,81 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            title: Streambuilder('app_title', TextStyle(fontSize: 22)),
-            actions: <Widget>[
-              IconButton(
-                icon: Image.asset('lib/Images/CanokeyLogo.png'),
-                onPressed: (){},
-              ),
-            ]),
-        drawer: Drawer(
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 50,
-              ),
-              ListTile(
-                  leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  size: 30,
+          appBar: AppBar(
+              title: Streambuilder('app_title', TextStyle(fontSize: 22)),
+              actions: <Widget>[
+                IconButton(
+                  icon: Image.asset('lib/Images/CanokeyLogo.png'),
+                  onPressed: () {},
                 ),
-                onPressed: () {
-                  setState(() {
-                    Navigator.pop(context);
-                  });
-                },
-              )),
-              InkWell(
-                child: ListTile(
-                  //Settings
-                  title: Streambuilder('about_page', TextStyle(fontSize: 16)),
-                  leading: Icon(
-                    Icons.error,
-                    size: 30,
+              ]),
+          drawer: Drawer(
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 50,
+                ),
+                ListTile(
+                    leading: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        size: 30,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          Navigator.pop(context);
+                        });
+                      },
+                    )),
+                InkWell(
+                  child: ListTile(
+                    //Settings
+                    title: Streambuilder('about_page', TextStyle(fontSize: 16)),
+                    leading: Icon(
+                      Icons.error,
+                      size: 30,
+                    ),
                   ),
+                  onTap: () {
+                    setState(() {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => AboutContent()));
+                    });
+                  },
                 ),
-                onTap: () {
-                  setState(() {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => AboutContent()));
-                  });
-                },
-              ),
-              InkWell(
-                child: ListTile(
-                  //Settings
-                  title: Streambuilder('help_page', TextStyle(fontSize: 16)),
-                  leading: Icon(
-                    Icons.help,
-                    size: 30,
+                InkWell(
+                  child: ListTile(
+                    //Settings
+                    title: Streambuilder('help_page', TextStyle(fontSize: 16)),
+                    leading: Icon(
+                      Icons.help,
+                      size: 30,
+                    ),
                   ),
+                  onTap: () {
+                    setState(() {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => HelpContent()));
+                    });
+                  },
                 ),
-                onTap: () {
-                  setState(() {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => HelpContent()));
-                  });
-                },
-              ),
-              InkWell(
-                child: ListTile(
-                  title: Streambuilder('language', TextStyle(fontSize: 16)),
-                  leading: Icon(
-                    Icons.language,
-                    size: 30,
+                InkWell(
+                  child: ListTile(
+                    title: Streambuilder('language', TextStyle(fontSize: 16)),
+                    leading: Icon(
+                      Icons.language,
+                      size: 30,
+                    ),
                   ),
-                ),
-                onTap: () {
-                  radioDialog();
-                },
-              )
-            ],
+                  onTap: () {
+                    radioDialog();
+                  },
+                )
+              ],
+            ),
           ),
-        ),
-        body:personalContent
-    );
+          body: personalContent
+      );
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:canaokey/DrawerPages/AppFuncBrowse.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:canaokey/Models/LeftScrollPrefab.dart';
@@ -12,7 +13,9 @@ import 'package:base32/base32.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:tutorial_coach_mark/target_focus.dart';
 import 'StreamBuilder.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 // ignore: must_be_immutable
 class KeysModule extends StatefulWidget {
@@ -31,6 +34,9 @@ class _KeysModuleState extends State<KeysModule> {
   NFCAvailability _nfcAvailability = NFCAvailability.not_supported;
   MaterialColor nfcAvailabilityColor = Colors.green;
   int _bottomIndex=1;
+  List targets=List();
+  TutorialCoachMark tutorialCoachMark;
+  GlobalKey key0=GlobalKey();
 
   List<String> parseData(String credentialList) {
     RegExp _regexp = RegExp(r"(71\w*?7502\w{4})");
@@ -142,7 +148,6 @@ class _KeysModuleState extends State<KeysModule> {
       _writeDialog(order);
     }
   }
-
 
   int _hexToInt(String hex) {
     int val = 0;
@@ -517,10 +522,34 @@ class _KeysModuleState extends State<KeysModule> {
       ..show();
   }
 
-
   void initState(){
     super.initState();
     _nfcAvailabilityDetect();
+  }
+
+  void setTarget(){
+    targets.add(
+      TargetFocus(
+        identify: "Target 0",
+        keyTarget: key0
+      )
+    );
+  }
+
+  void showTarget() {
+    tutorialCoachMark = TutorialCoachMark(context,
+        targets: targets,
+        colorShadow: Colors.red,
+        textSkip: "SKIP",
+        paddingFocus: 10,
+        opacityShadow: 0.8, onFinish: () {
+          print("finish");
+        }, onClickTarget: (target) {
+          print(target);
+        }, onClickSkip: () {
+          print("skip");
+        })
+      ..show();
   }
 
   _nfcAvailabilityDetect() async {
@@ -574,9 +603,10 @@ class _KeysModuleState extends State<KeysModule> {
       ),
       bottomNavigationBar:AnimatedBottomNavigationBar(
         icons: [
-          Icons.add,Icons.camera,Icons.refresh,
+          Icons.add,Icons.camera,Icons.refresh
         ],
         iconSize: 28,
+        notchSmoothness: NotchSmoothness.defaultEdge,
         leftCornerRadius: 25,
         rightCornerRadius: 25,
         height: 75,
@@ -586,7 +616,8 @@ class _KeysModuleState extends State<KeysModule> {
         onTap: (index){
           if(index==0)_addDialog();
           else if (index==1) scan();
-          else refresh();
+          else if (index==2) refresh();
+          else Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AppFuncBrowse()));
           setState(() {
             _bottomIndex=index;
           });
