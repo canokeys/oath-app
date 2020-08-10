@@ -1,9 +1,8 @@
 import 'dart:math';
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:canaokey/DrawerPages/AppFuncBrowse.dart';
+import 'package:canokey/Models/Bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:canaokey/Models/LeftScrollPrefab.dart';
+import 'package:canokey/Models/LeftScrollPrefab.dart';
 import 'package:flutter/services.dart';
 import 'dart:io' show sleep;
 import 'dart:convert';
@@ -13,16 +12,11 @@ import 'package:base32/base32.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:toggle_switch/toggle_switch.dart';
-import 'package:tutorial_coach_mark/target_focus.dart';
 import 'StreamBuilder.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 // ignore: must_be_immutable
 class KeysModule extends StatefulWidget {
-  String heroTag;
-
-  KeysModule(Key key, this.heroTag) : super(key: key);
-
   @override
   _KeysModuleState createState() => _KeysModuleState();
 }
@@ -342,8 +336,8 @@ class _KeysModuleState extends State<KeysModule> {
           for (int i = 0; i < intList.length; i++) {
             nameInutf8 += intList[i].toRadixString(16);
           }
-          String key =
-              typeAndalgorithm + '06' + base32.decodeAsHexString(_key.text);
+          print('base32encode:${base32.encodeString(_key.text)}');
+          String key = typeAndalgorithm + '06' + base32.decodeAsHexString(base32.encodeString(_key.text));
           int datalen = 2 +
               (nameInutf8.length / 2).floor() +
               2 +
@@ -353,8 +347,7 @@ class _KeysModuleState extends State<KeysModule> {
           String keyLength =
               (key.length / 2).floor().toRadixString(16).padLeft(2, '0');
           String dataLength = datalen.toRadixString(16).padLeft(2, '0');
-          String order =
-              '00010000${dataLength}71$nameLength${nameInutf8}73$keyLength$key';
+          String order = '00010000${dataLength}71$nameLength${nameInutf8}73$keyLength$key';
           print(order);
           var _loading=AwesomeDialog(
             context: context,
@@ -527,31 +520,6 @@ class _KeysModuleState extends State<KeysModule> {
     _nfcAvailabilityDetect();
   }
 
-  void setTarget(){
-    targets.add(
-      TargetFocus(
-        identify: "Target 0",
-        keyTarget: key0
-      )
-    );
-  }
-
-  void showTarget() {
-    tutorialCoachMark = TutorialCoachMark(context,
-        targets: targets,
-        colorShadow: Colors.red,
-        textSkip: "SKIP",
-        paddingFocus: 10,
-        opacityShadow: 0.8, onFinish: () {
-          print("finish");
-        }, onClickTarget: (target) {
-          print(target);
-        }, onClickSkip: () {
-          print("skip");
-        })
-      ..show();
-  }
-
   _nfcAvailabilityDetect() async {
     NFCAvailability availability;
     try {
@@ -588,7 +556,7 @@ class _KeysModuleState extends State<KeysModule> {
               color: nfcAvailabilityColor,
             ),
             trailing: IconButton(
-              icon: Icon(Icons.refresh),
+              icon: Icon(Icons.refresh, key: LanguageBloc.key1,),
               color: Colors.black,
               onPressed: (){
                 _nfcAvailabilityDetect();
@@ -601,28 +569,27 @@ class _KeysModuleState extends State<KeysModule> {
           )
         ],
       ),
-      bottomNavigationBar:AnimatedBottomNavigationBar(
-        icons: [
-          Icons.add,Icons.camera,Icons.refresh
-        ],
-        iconSize: 28,
-        notchSmoothness: NotchSmoothness.defaultEdge,
-        leftCornerRadius: 25,
-        rightCornerRadius: 25,
-        height: 75,
-        activeColor: Colors.blue,
-        splashColor: Colors.blue,
-        activeIndex: _bottomIndex,
-        onTap: (index){
-          if(index==0)_addDialog();
-          else if (index==1) scan();
-          else if (index==2) refresh();
-          else Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AppFuncBrowse()));
-          setState(() {
-            _bottomIndex=index;
-          });
-        },
-      )
+        bottomNavigationBar: BottomNavigationBar(
+          iconSize: 30,
+          elevation: 25,
+          items: [
+            BottomNavigationBarItem(title: Text(""), icon: Icon(Icons.add, key: LanguageBloc.key2,)),
+            BottomNavigationBarItem(title: Text(""), icon: Icon(Icons.camera, key: LanguageBloc.key3,)),
+            BottomNavigationBarItem(title: Text(""), icon: Icon(Icons.refresh, key: LanguageBloc.key4)),
+          ],
+          currentIndex: _bottomIndex,
+          onTap: (index) {
+            if (index == 0)
+              _addDialog();
+            else if (index == 1)
+              scan();
+            else
+              refresh();
+            setState(() {
+              _bottomIndex = index;
+            });
+          }
+        ),
     );
   }
 

@@ -1,4 +1,4 @@
-name: canaokey
+name: canokey
 description: A new Flutter application.
 
 # The following line prevents the package from being accidentally published to
@@ -39,8 +39,9 @@ dependencies:
   path:
   path_provider:
   rxdart:
-  animated_bottom_navigation_bar:
   loading_animations:
+  tutorial_coach_mark:
+  sa_stateless_animation:
 
 dev_dependencies:
   flutter_test:

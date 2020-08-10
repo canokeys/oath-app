@@ -1,5 +1,5 @@
 import 'dart:io' show sleep;
-import 'package:canaokey/Models/MultiLanguage.dart';
+import 'package:canokey/Models/MultiLanguage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';

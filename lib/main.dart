@@ -1,20 +1,20 @@
-import 'package:canaokey/DrawerPages/AppFuncBrowse.dart';
-import 'package:canaokey/MainPages/Credentials.dart';
-import 'package:canaokey/Models/DataSave.dart';
-import 'package:canaokey/Models/StreamBuilder.dart';
+import 'package:canokey/Models/StartPage.dart';
+import 'package:canokey/Models/DataSave.dart';
+import 'package:canokey/Models/Tutorial.dart';
+import 'package:canokey/Models/CredentialModule.dart';
+import 'package:canokey/Models/StreamBuilder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'DrawerPages/HelpPage.dart';
 import 'DrawerPages/AboutPage.dart';
-import 'Models/Bloc.dart';
+import 'package:canokey/Models/Bloc.dart';
 
 class LanBloc extends InheritedWidget {
   final LanguageBloc bloc;
   final Settings settings;
 
   const LanBloc(
-    this.bloc,this.settings,
-      {
+    this.bloc,
+    this.settings, {
     Key key,
     @required Widget child,
   })  : assert(child != null),
@@ -37,12 +37,12 @@ void main() async {
   runApp(LanBloc(bloc, settings, child: MyApp()));
 }
 
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return MaterialApp(home: ScaffoldRoute());
+    return MaterialApp(
+        home: StartPage());
   }
 }
 
@@ -58,18 +58,34 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
   List<Language> languages = [
     Language.English,
     Language.Chinese,
-    Language.Japanese
+    Language.Japanese,
+    Language.French,
+    Language.German
   ];
   int currentLanguage;
-  static PersonalContent personalContent = new PersonalContent();
+
   @override
-  void didChangeDependencies(){
+  void initState() {
+    Tutorial.initTargets();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Future.delayed(Duration(milliseconds: 100), () {
+        if (!LanBloc.of(context).settings.flag) {
+          Tutorial.showTutorial(context);
+          LanBloc.of(context).settings.setFlag(true);
+          Functions.writeSettings(
+              Settings.filename, LanBloc.of(context).settings);
+        }
+      });
+    });
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
     setState(() {
       currentLanguage = LanBloc.of(context).settings.currentLan;
     });
-    if(LanBloc.of(context).settings.flag==false){
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => AppFuncBrowse(false)));
-    }
     super.didChangeDependencies();
   }
 
@@ -131,14 +147,52 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
                       Text('日本語')
                     ],
                   ),
+                  Row(
+                    children: <Widget>[
+                      Radio(
+                        groupValue: currentLanguage,
+                        activeColor: Colors.blue,
+                        value: 3,
+                        onChanged: (value) {
+                          state(() {
+                            currentLanguage = value;
+                            print(currentLanguage);
+                          });
+                        },
+                      ),
+                      Text('Français')
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Radio(
+                        groupValue: currentLanguage,
+                        activeColor: Colors.blue,
+                        value: 4,
+                        onChanged: (value) {
+                          state(() {
+                            currentLanguage = value;
+                            print(currentLanguage);
+                          });
+                        },
+                      ),
+                      Text('Deutsch')
+                    ],
+                  ),
                   FlatButton(
                     child: Streambuilder('confirm',
                         TextStyle(fontSize: 16, color: Colors.white)),
                     color: Colors.green,
                     onPressed: () {
-                      LanBloc.of(context).bloc.languageSink.add(languages[currentLanguage]);
-                      LanBloc.of(context).settings.setCurrentLan(currentLanguage);
-                      Functions.writeSettings(Settings.filename, LanBloc.of(context).settings);
+                      LanBloc.of(context)
+                          .bloc
+                          .languageSink
+                          .add(languages[currentLanguage]);
+                      LanBloc.of(context)
+                          .settings
+                          .setCurrentLan(currentLanguage);
+                      Functions.writeSettings(
+                          Settings.filename, LanBloc.of(context).settings);
                       Navigator.pop(context);
                     },
                   )
@@ -152,81 +206,79 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-          appBar: AppBar(
-              title: Streambuilder('app_title', TextStyle(fontSize: 22)),
-              actions: <Widget>[
-                IconButton(
-                  icon: Image.asset('lib/Images/CanokeyLogo.png'),
-                  onPressed: () {},
+        appBar: AppBar(
+            title: Streambuilder('app_title', TextStyle(fontSize: 22)),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.help),
+                onPressed: () {
+                  Tutorial.showTutorial(context);
+                },
+              ),
+            ]),
+        drawer: Drawer(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 50,
+              ),
+              ListTile(
+                  leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  size: 30,
                 ),
-              ]),
-          drawer: Drawer(
-            child: Column(
-              children: <Widget>[
-                SizedBox(
-                  height: 50,
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+              )),
+              InkWell(
+                child: ListTile(
+                  //Settings
+                  title: Streambuilder('about_page', TextStyle(fontSize: 16)),
+                  leading: Icon(
+                    Icons.error,
+                    size: 30,
+                  ),
                 ),
-                ListTile(
-                    leading: IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          Navigator.pop(context);
-                        });
-                      },
-                    )),
-                InkWell(
-                  child: ListTile(
-                    //Settings
-                    title: Streambuilder('about_page', TextStyle(fontSize: 16)),
-                    leading: Icon(
-                      Icons.error,
-                      size: 30,
-                    ),
+                onTap: () {
+                  setState(() {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => AboutContent()));
+                  });
+                },
+              ),
+              InkWell(
+                child: ListTile(
+                  //Settings
+                  title: Streambuilder('help_page', TextStyle(fontSize: 16)),
+                  leading: Icon(
+                    Icons.help,
+                    size: 30,
                   ),
                   onTap: () {
-                    setState(() {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AboutContent()));
-                    });
+                    Navigator.pop(context);
+                    Tutorial.showTutorial(context);
                   },
                 ),
-                InkWell(
-                  child: ListTile(
-                    //Settings
-                    title: Streambuilder('help_page', TextStyle(fontSize: 16)),
-                    leading: Icon(
-                      Icons.help,
-                      size: 30,
-                    ),
+              ),
+              InkWell(
+                child: ListTile(
+                  title: Streambuilder('language', TextStyle(fontSize: 16)),
+                  leading: Icon(
+                    Icons.language,
+                    size: 30,
                   ),
-                  onTap: () {
-                    setState(() {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => HelpContent()));
-                    });
-                  },
                 ),
-                InkWell(
-                  child: ListTile(
-                    title: Streambuilder('language', TextStyle(fontSize: 16)),
-                    leading: Icon(
-                      Icons.language,
-                      size: 30,
-                    ),
-                  ),
-                  onTap: () {
-                    radioDialog();
-                  },
-                )
-              ],
-            ),
+                onTap: () {
+                  radioDialog();
+                },
+              )
+            ],
           ),
-          body: personalContent
-      );
+        ),
+        body: KeysModule());
   }
 }
