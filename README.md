@@ -4,13 +4,36 @@ A Flutter Application,both support Android and IOS.This app is written for Canok
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This app is made for Canokey to do two-step verify.Support Google,Github,etc.The user introduction has
+been written in app.
 
-A few resources to get you started if this is your first Flutter project:
+## Explanations to code
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+### Folders
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+#### DrawerPages：
+
+AboutPage.dart:Use in main.dart.Show via drawer.
+
+#### Images:
+
+All the images sources are stored in this folder.
+
+#### Models:
+
+Bloc.dart&DataSave.dart&StreamBuilder.dart&MultiLanguage.dart:
+These files are written for local storage,to store some users settings.And support-languages include:
+**English,Chinese,Japanese,French,German**
+
+**CredentialModule.dart :**
+This is the most significant file.It contain all the functions to order Canokey.And it shows the credentials
+on the screen.
+
+LeftScrollPrefab.dart:
+A Prefab which add credential module in CredentialModule.And it support user left scroll it to remove it.
+
+StartPage.dart：
+A lead in page.Use for beautify the app.
+
+Tutorial.dart:
+A instruction to lead users to use this app.Load at the first installation and the time user click 'help'.
