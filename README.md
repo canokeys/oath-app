@@ -23,7 +23,7 @@ All the images sources are stored in this folder.
 
 Bloc.dart&DataSave.dart&StreamBuilder.dart&MultiLanguage.dart:
 These files are written for local storage,to store some users settings.And support-languages include:
-#####**English,Chinese,Japanese,French,German**
+**English,Chinese,Japanese,French,German**
 
 **CredentialModule.dart :**
 This is the most significant file.It contain all the functions to order Canokey.And it shows the credentials
