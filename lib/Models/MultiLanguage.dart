@@ -26,9 +26,11 @@ LanguagePackage English = LanguagePackage({
   "warning": "Warning!",
   "success": "Success!",
   "failed": "Failed!",
-  "result_Addfailed": "Something Went Wrong!Please Try Again.Maybe This Account Has Been Added Before?",
+  "result_Addfailed":
+      "Something Went Wrong!Please Try Again.Maybe This Account Has Been Added Before?",
   "result_success": "Add Account Successfully.",
-  "result_Confailed": "Something Went Wrong!Please Try Again.The Connection Went Wrong.",
+  "result_Confailed":
+      "Something Went Wrong!Please Try Again.The Connection Went Wrong.",
   "connect": "Please use NFC to connect Canokey.We are adding new account now.",
   "credential_null": "Credentials in Canokey are null!",
   "account_name": "Account Name",
@@ -42,14 +44,15 @@ LanguagePackage English = LanguagePackage({
   "finished": "Finished",
   "instruction": "App Instruction",
   "confirm": "Confirm",
-  "connecting": "Keep your Canokey close to your device.Usually,at the back of device.",
+  "connecting":
+      "Keep your Canokey close to your device.Usually,at the back of device.",
   "poll_timeout": "Connecting failed or time our.Please retry connection.",
   "refresh_success": "Refreshing succeed!",
   "refresh_info": "Click here To Refresh NFC Availability",
   "bottom_add": "Add New Account By Hand",
   "bottom_scan": "Open Camera To Scan",
   "bottom_refresh": "Refresh Credentials",
-  "start_client":"Start Using Canokey!"
+  "start_client": "Start Using Canokey!"
 });
 
 // ignore: non_constant_identifier_names
@@ -97,7 +100,7 @@ LanguagePackage Chinese = LanguagePackage({
   "bottom_add": "手动新增账号",
   "bottom_scan": "打开摄像头扫描",
   "bottom_refresh": "刷新证书",
-  "start_client":"开始使用您的Canokey吧！"
+  "start_client": "开始使用您的Canokey吧！"
 });
 
 // ignore: non_constant_identifier_names
@@ -145,7 +148,7 @@ LanguagePackage Japanese = LanguagePackage({
   "bottom_add": "手で新しい口座を加えてください",
   "bottom_scan": "開いているカメラをスキャンしてください",
   "bottom_refresh": "リフレッシュ資格情報",
-  "start_client":"あなたのCanokeyを使い始めましょう!"
+  "start_client": "あなたのCanokeyを使い始めましょう!"
 });
 
 // ignore: non_constant_identifier_names
@@ -158,7 +161,8 @@ LanguagePackage French = LanguagePackage({
   "about_page": "À propos de",
   "help_page": "Aide",
   "dialog_attention": "Attention!",
-  "dialog_removeConfirm": "Êtes-vous sûr de vouloir supprimer cet enregistrement?",
+  "dialog_removeConfirm":
+      "Êtes-vous sûr de vouloir supprimer cet enregistrement?",
   "dialog_yes": "Oui",
   "dialog_no": "Non",
   "canokey_name": "Canokey Name",
@@ -171,13 +175,17 @@ LanguagePackage French = LanguagePackage({
   "success": "Success!",
   "result_success": "Le compte a été ajouté avec succès!",
   "failed": "Failed!",
-  "result_Addfailed": "Une erreur s'est produite! Veuillez réessayer. Ce compte a peut-être déjà été ajouté?",
-  "result_Confailed": "Une erreur s'est produite! Veuillez réessayer. La connexion avec Canokey a échoué",
-  "connect": "Veuillez connecter Canokey via NFC, nous essayons de créer un nouveau compte",
+  "result_Addfailed":
+      "Une erreur s'est produite! Veuillez réessayer. Ce compte a peut-être déjà été ajouté?",
+  "result_Confailed":
+      "Une erreur s'est produite! Veuillez réessayer. La connexion avec Canokey a échoué",
+  "connect":
+      "Veuillez connecter Canokey via NFC, nous essayons de créer un nouveau compte",
   "credential_null": "Il n'y a pas de certificat dans Canokey!",
   "account_name": "Account Name",
   "account_key": "Clé (UTF-8)",
-  "refresh": "Actualisation du certificat. Veuillez connecter Canokey à l'appareil.",
+  "refresh":
+      "Actualisation du certificat. Veuillez connecter Canokey à l'appareil.",
   "namedCanokey": "Nommez votre Canoky",
   "input": "Input ...",
   "detectBefore": "Ce Canokey a été saisi!",
@@ -186,14 +194,15 @@ LanguagePackage French = LanguagePackage({
   "finished": "Terminer",
   "instruction": "Tutoriel d'application",
   "confirm": "OK",
-  "connecting": "Connectez votre Canokey. Normalement, placez Canokey près de l'arrière de l'appareil.",
+  "connecting":
+      "Connectez votre Canokey. Normalement, placez Canokey près de l'arrière de l'appareil.",
   "poll_timeout": "La connexion a échoué ou a expiré, veuillez réessayer.",
   "refresh_success": "Actualisation réussie!",
   "refresh_info": "Cliquez ici pour actualiser la disponibilité de NFC",
   "bottom_add": "Ajouter un nouveau compte manuellement",
   "bottom_scan": "Ouvrez la caméra et scannez.",
   "bottom_refresh": "Mise à jour des documents",
-  "start_client":"Commencez à utiliser votre Canokey!"
+  "start_client": "Commencez à utiliser votre Canokey!"
 });
 
 // ignore: non_constant_identifier_names
@@ -219,13 +228,17 @@ LanguagePackage German = LanguagePackage({
   "success": "Erfolg!",
   "result_success": "Das Konto wurde erfolgreich hinzugefügt!",
   "failed": "fehlgeschlagen!",
-  "result_Addfailed": "Ein Fehler ist aufgetreten! Bitte versuchen Sie es erneut. Vielleicht wurde dieses Konto bereits hinzugefügt?",
-  "result_Confailed": "Ein Fehler ist aufgetreten! Bitte versuchen Sie es erneut. Verbindung mit Canokey fehlgeschlagen",
-  "connect": "Bitte verbinden Sie Canokey über NFC, wir versuchen ein neues Konto zu erstellen",
+  "result_Addfailed":
+      "Ein Fehler ist aufgetreten! Bitte versuchen Sie es erneut. Vielleicht wurde dieses Konto bereits hinzugefügt?",
+  "result_Confailed":
+      "Ein Fehler ist aufgetreten! Bitte versuchen Sie es erneut. Verbindung mit Canokey fehlgeschlagen",
+  "connect":
+      "Bitte verbinden Sie Canokey über NFC, wir versuchen ein neues Konto zu erstellen",
   "credential_null": "Es gibt kein Zertifikat in Canokey!",
   "account_name": "Kontoname",
   "account_key": "Geheimer Schlüssel(UTF-8)",
-  "refresh": "Aktualisieren des Zertifikats. Bitte verbinden Sie Canokey mit dem Gerät.",
+  "refresh":
+      "Aktualisieren des Zertifikats. Bitte verbinden Sie Canokey mit dem Gerät.",
   "namedCanokey": "Nennen Sie Ihren Canoky",
   "input": "Eingabe ...",
   "detectBefore": "Dieser Canokey wurde eingegeben!",
@@ -234,12 +247,15 @@ LanguagePackage German = LanguagePackage({
   "finished": "Fertig",
   "instruction": "Anwendungs-Tutorial",
   "confirm": "OK",
-  "connecting": "Schließen Sie Ihren Canokey an. Platzieren Sie Canokey normalerweise in der Nähe der Rückseite des Geräts.",
-  "poll_timeout": "Verbindung fehlgeschlagen oder Zeitüberschreitung, bitte versuchen Sie erneut, eine Verbindung herzustellen.",
+  "connecting":
+      "Schließen Sie Ihren Canokey an. Platzieren Sie Canokey normalerweise in der Nähe der Rückseite des Geräts.",
+  "poll_timeout":
+      "Verbindung fehlgeschlagen oder Zeitüberschreitung, bitte versuchen Sie erneut, eine Verbindung herzustellen.",
   "refresh_success": "Erfolgreich aktualisieren!",
-  "refresh_info": "Klicken Sie hier, um die NFC-Verfügbarkeit zu aktualisieren.",
+  "refresh_info":
+      "Klicken Sie hier, um die NFC-Verfügbarkeit zu aktualisieren.",
   "bottom_add": "Neues Konto per Hand hinzufügen.",
   "bottom_scan": "Öffnen Sie Kamera zum Scannen",
   "bottom_refresh": "Aktualisieren von Anmeldedaten",
-  "start_client":"Starten Sie mit Ihrem Canokey!"
+  "start_client": "Starten Sie mit Ihrem Canokey!"
 });

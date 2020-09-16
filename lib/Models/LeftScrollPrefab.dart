@@ -89,16 +89,16 @@ class _leftScrollState extends State<leftScroll> {
         animType: AnimType.BOTTOMSLIDE,
         body: Column(
           children: <Widget>[
-            Streambuilder('warning',TextStyle(fontSize: 24)),
-            Streambuilder('dialog_removeConfirm',TextStyle(fontSize: 16))
+            Streambuilder('warning', TextStyle(fontSize: 24)),
+            Streambuilder('dialog_removeConfirm', TextStyle(fontSize: 16))
           ],
         ),
         btnOkOnPress: () async {
           String nm = widget.nameInUtf8;
           int tmplength = widget.text.length + 2;
           String length, nmLenth;
-          length=tmplength.toRadixString(16).padLeft(2,'0');
-          nmLenth=(tmplength-2).toRadixString(16).padLeft(2,'0');
+          length = tmplength.toRadixString(16).padLeft(2, '0');
+          nmLenth = (tmplength - 2).toRadixString(16).padLeft(2, '0');
           String command = '00020000${length}71${(nmLenth)}$nm';
           await FlutterNfcKit.poll();
           await FlutterNfcKit.transceive('00A4040007A0000005272101');
@@ -107,8 +107,8 @@ class _leftScrollState extends State<leftScroll> {
             widget.callback(this.widget);
           }
         },
-      btnCancelOnPress: (){}
-    )..show();
+        btnCancelOnPress: () {})
+      ..show();
   }
 
   @override

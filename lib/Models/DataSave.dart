@@ -23,17 +23,17 @@ Future<File> writeToFile(String data, String filename) async {
 
 // ignore: missing_return
 Future<String> readFromFile(String filename) async {
-  try{
+  try {
     final file = await _localFile(filename);
 
     String data = file.readAsStringSync();
     return data;
-  } catch(e) {
+  } catch (e) {
     print(e);
   }
 }
 
-class Settings{
+class Settings {
   int currentLan;
   bool flag;
   static String filename = "settings";
@@ -41,25 +41,25 @@ class Settings{
   Settings({this.currentLan, this.flag});
 
   // ignore: non_constant_identifier_names
-  void setCurrentLan(int Lan){
+  void setCurrentLan(int Lan) {
     currentLan = Lan;
   }
 
-  void setFlag(bool _flag){
+  void setFlag(bool _flag) {
     flag = _flag;
   }
 
   Settings.fromJson(Map<String, dynamic> json)
-        :currentLan = json["currentLan"],
-          flag = json["flag"];
+      : currentLan = json["currentLan"],
+        flag = json["flag"];
 
   Map<String, dynamic> toJson() => {
-    "currentLan": currentLan,
-    "flag": flag,
-  };
+        "currentLan": currentLan,
+        "flag": flag,
+      };
 }
 
-class Data{
+class Data {
   String id;
   String standard;
   String name;
@@ -67,20 +67,16 @@ class Data{
 
   Data(this.id, this.standard, this.name, this.transceive);
   Data.fromJson(Map<String, dynamic> json)
-        :id = json["id"],
+      : id = json["id"],
         standard = json["standard"],
         name = json["name"],
         transceive = json["transceive"];
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "standard": standard,
-    "name": name,
-    "transceive": transceive
-  };
+  Map<String, dynamic> toJson() =>
+      {"id": id, "standard": standard, "name": name, "transceive": transceive};
 }
 
-class DataBase{
+class DataBase {
   DataBase(this._database);
 
   List<Data> _database;
@@ -89,59 +85,62 @@ class DataBase{
 
   static String filename = "savedata";
 
-  void addData(Data data){
+  void addData(Data data) {
     _database.add(data);
   }
 
-  void removeDataById(String id){
+  void removeDataById(String id) {
     Data data = _database.firstWhere((element) => element.id == id);
     _database.remove(data);
   }
 
-  int getIndexById(String id){
-    Data data = _database.firstWhere((element) => element.id == id,orElse: (){return null;});
-    if (data==null)return -1;
-    else return _database.indexOf(data);
+  int getIndexById(String id) {
+    Data data = _database.firstWhere((element) => element.id == id, orElse: () {
+      return null;
+    });
+    if (data == null)
+      return -1;
+    else
+      return _database.indexOf(data);
   }
 
-  DataBase.loadFromJson(String jsonString){
+  DataBase.loadFromJson(String jsonString) {
     _database = List<Data>();
-    List<dynamic>jsonData = json.decode(jsonString);
-    for(dynamic data in jsonData){
+    List<dynamic> jsonData = json.decode(jsonString);
+    for (dynamic data in jsonData) {
       Data newData = Data.fromJson(data);
       _database.add(newData);
     }
   }
 
-  String toJsonString(){
+  String toJsonString() {
     return json.encode(database.map((data) => data.toJson()).toList());
   }
 }
 
-
-class Functions{
-  static Future<Settings> loadSettings(String filename) async{
+class Functions {
+  static Future<Settings> loadSettings(String filename) async {
     String jsonString = await readFromFile(filename);
     Settings settings;
-    try{
+    try {
       settings = Settings.fromJson(json.decode(jsonString));
-    } catch(e){
+    } catch (e) {
       print(e);
       settings = Settings(currentLan: 0, flag: false);
     }
     return settings;
   }
 
-  static Future<void> writeSettings(String filename, Settings settings) async{
+  static Future<void> writeSettings(String filename, Settings settings) async {
     await writeToFile(json.encode(settings.toJson()), filename);
   }
 
-  static Future<DataBase> loadDataBase(String filename) async{
+  static Future<DataBase> loadDataBase(String filename) async {
     String jsonString = await readFromFile(filename);
     DataBase database;
-    try{
+    try {
       database = DataBase.loadFromJson(jsonString);
-    } catch(e){
+    } catch (e) {
       database = DataBase([]);
     }
     return database;

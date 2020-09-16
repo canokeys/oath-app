@@ -27,10 +27,10 @@ class _KeysModuleState extends State<KeysModule> {
   var HomeRow = <Widget>[];
   NFCAvailability _nfcAvailability = NFCAvailability.not_supported;
   MaterialColor nfcAvailabilityColor = Colors.green;
-  int _bottomIndex=1;
-  List targets=List();
+  int _bottomIndex = 1;
+  List targets = List();
   TutorialCoachMark tutorialCoachMark;
-  GlobalKey key0=GlobalKey();
+  GlobalKey key0 = GlobalKey();
 
   List<String> parseData(String credentialList) {
     RegExp _regexp = RegExp(r"(71\w*?7502\w{4})");
@@ -129,15 +129,13 @@ class _KeysModuleState extends State<KeysModule> {
         order +=
             '${dataLen}71$nameLen$accountName}73$keyLen${otpType}06${key}7A04$counterData';
       } else {
-        order +=
-            '${dataLen}71$nameLen${accountName}73$keyLen${otpType}06$key';
+        order += '${dataLen}71$nameLen${accountName}73$keyLen${otpType}06$key';
       }
       print(order);
       _writeDialog(order);
     } else {
       otpType = '21';
-      order +=
-          '${dataLen}71$nameLen${accountName}73$keyLen${otpType}06$key';
+      order += '${dataLen}71$nameLen${accountName}73$keyLen${otpType}06$key';
       print(order);
       _writeDialog(order);
     }
@@ -172,7 +170,8 @@ class _KeysModuleState extends State<KeysModule> {
         padding: EdgeInsets.all(10),
         body: Column(
           children: <Widget>[
-            Streambuilder('success', TextStyle(fontSize: 24,fontWeight: FontWeight.bold)),
+            Streambuilder('success',
+                TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             Streambuilder(info, TextStyle(fontSize: 16))
           ],
         ),
@@ -189,7 +188,8 @@ class _KeysModuleState extends State<KeysModule> {
         animType: AnimType.BOTTOMSLIDE,
         body: Column(
           children: <Widget>[
-            Streambuilder('warning', TextStyle(fontSize: 24,fontWeight: FontWeight.bold)),
+            Streambuilder('warning',
+                TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             Streambuilder(info, TextStyle(fontSize: 16))
           ],
         ),
@@ -205,13 +205,14 @@ class _KeysModuleState extends State<KeysModule> {
       padding: EdgeInsets.all(10),
       body: Column(
         children: <Widget>[
-          Streambuilder('dialog_attention', TextStyle(fontSize: 24,fontWeight: FontWeight.bold)),
+          Streambuilder('dialog_attention',
+              TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           Streambuilder('connect', TextStyle(fontSize: 16))
         ],
       ),
       btnCancelOnPress: () {},
       btnOkOnPress: () async {
-        var _loading=AwesomeDialog(
+        var _loading = AwesomeDialog(
           context: context,
           headerAnimationLoop: false,
           dialogType: DialogType.INFO,
@@ -219,16 +220,18 @@ class _KeysModuleState extends State<KeysModule> {
           padding: EdgeInsets.all(10),
           body: Column(
             children: <Widget>[
-              Streambuilder('dialog_attention', TextStyle(fontSize: 24,fontWeight: FontWeight.bold)),
+              Streambuilder('dialog_attention',
+                  TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               Streambuilder('connecting', TextStyle(fontSize: 16)),
               LoadingBouncingGrid.circle()
             ],
           ),
         );
         _loading.show();
-        try{
+        try {
           await FlutterNfcKit.poll();
-          String re1 = await FlutterNfcKit.transceive('00A4040007A0000005272101');
+          String re1 =
+              await FlutterNfcKit.transceive('00A4040007A0000005272101');
           print(re1);
           if (re1 == '9000') {
             String re2 = await FlutterNfcKit.transceive(order);
@@ -250,7 +253,7 @@ class _KeysModuleState extends State<KeysModule> {
             });
             _failedDialog('result_Confailed');
           }
-        }catch(e){
+        } catch (e) {
           setState(() {
             _loading.dissmiss();
           });
@@ -313,17 +316,16 @@ class _KeysModuleState extends State<KeysModule> {
               width: 200,
             ),
             ToggleSwitch(
-              minWidth: 60.0,
-              initialLabelIndex: 0,
-              activeBgColor: Colors.blue,
-              activeFgColor: Colors.white,
-              inactiveBgColor: Colors.grey,
-              inactiveFgColor: Colors.grey[900],
-              labels: ['TOTP', 'HOTP'],
-              onToggle: (index) {
-                groupValue = index;
-              },
-            )
+                minWidth: 60.0,
+                initialLabelIndex: 0,
+                activeBgColor: Colors.blue,
+                activeFgColor: Colors.white,
+                inactiveBgColor: Colors.grey,
+                inactiveFgColor: Colors.grey[900],
+                labels: ['TOTP', 'HOTP'],
+                onToggle: (index) {
+                  groupValue = index;
+                })
           ],
         ),
         btnOkOnPress: () async {
@@ -337,7 +339,9 @@ class _KeysModuleState extends State<KeysModule> {
             nameInutf8 += intList[i].toRadixString(16);
           }
           print('base32encode:${base32.encodeString(_key.text)}');
-          String key = typeAndalgorithm + '06' + base32.decodeAsHexString(base32.encodeString(_key.text));
+          String key = typeAndalgorithm +
+              '06' +
+              base32.decodeAsHexString(base32.encodeString(_key.text));
           int datalen = 2 +
               (nameInutf8.length / 2).floor() +
               2 +
@@ -347,9 +351,10 @@ class _KeysModuleState extends State<KeysModule> {
           String keyLength =
               (key.length / 2).floor().toRadixString(16).padLeft(2, '0');
           String dataLength = datalen.toRadixString(16).padLeft(2, '0');
-          String order = '00010000${dataLength}71$nameLength${nameInutf8}73$keyLength$key';
+          String order =
+              '00010000${dataLength}71$nameLength${nameInutf8}73$keyLength$key';
           print(order);
-          var _loading=AwesomeDialog(
+          var _loading = AwesomeDialog(
             context: context,
             headerAnimationLoop: false,
             dialogType: DialogType.INFO,
@@ -357,7 +362,8 @@ class _KeysModuleState extends State<KeysModule> {
             padding: EdgeInsets.all(10),
             body: Column(
               children: <Widget>[
-                Streambuilder('dialog_attention', TextStyle(fontSize: 24,fontWeight: FontWeight.bold)),
+                Streambuilder('dialog_attention',
+                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 Streambuilder('connecting', TextStyle(fontSize: 16)),
                 LoadingBouncingGrid.circle()
               ],
@@ -366,8 +372,8 @@ class _KeysModuleState extends State<KeysModule> {
           _loading.show();
           try {
             await FlutterNfcKit.poll();
-            String re1 = await FlutterNfcKit.transceive(
-                '00A4040007A0000005272101');
+            String re1 =
+                await FlutterNfcKit.transceive('00A4040007A0000005272101');
             print(re1);
             if (re1 == '9000') {
               String re2 = await FlutterNfcKit.transceive(order);
@@ -379,7 +385,7 @@ class _KeysModuleState extends State<KeysModule> {
                 _successDialog('result_success');
               }
             }
-          }catch(e){
+          } catch (e) {
             setState(() {
               _loading.dissmiss();
             });
@@ -399,7 +405,6 @@ class _KeysModuleState extends State<KeysModule> {
       int tmpint = _hexToInt(tmp);
       list.add(tmpint);
     }
-    print('list:$list');
     List strList = new List();
     for (int i = 0; i < list.length; i++) {
       strList.add(list[i].toRadixString(2).padLeft(8, '0'));
@@ -408,7 +413,6 @@ class _KeysModuleState extends State<KeysModule> {
     for (int i = 0; i < strList.length; i++) {
       radix2result += strList[i];
     }
-    print('radix2Result:$radix2result');
     var result = radix2to10(radix2result) % 1000000;
     return result.toString().padLeft(6, '0');
   }
@@ -439,39 +443,41 @@ class _KeysModuleState extends State<KeysModule> {
         padding: EdgeInsets.all(10),
         body: Column(
           children: <Widget>[
-            Streambuilder('dialog_attention',TextStyle(fontSize: 24)),
-            Streambuilder('refresh',TextStyle(fontSize: 16))
+            Streambuilder('dialog_attention', TextStyle(fontSize: 24)),
+            Streambuilder('refresh', TextStyle(fontSize: 16))
           ],
         ),
         btnOkOnPress: () async {
-          var _loading=AwesomeDialog(
-              context: context,
-              headerAnimationLoop: false,
-              dialogType: DialogType.INFO,
-              animType: AnimType.BOTTOMSLIDE,
-              padding: EdgeInsets.all(10),
-              body: Column(
-                children: <Widget>[
-                  Streambuilder('dialog_attention', TextStyle(fontSize: 24,fontWeight: FontWeight.bold)),
-                  Streambuilder('connecting', TextStyle(fontSize: 16)),
-                  LoadingBouncingGrid.circle()
-                ],
-              ),
+          var _loading = AwesomeDialog(
+            context: context,
+            headerAnimationLoop: false,
+            dialogType: DialogType.INFO,
+            animType: AnimType.BOTTOMSLIDE,
+            padding: EdgeInsets.all(10),
+            body: Column(
+              children: <Widget>[
+                Streambuilder('dialog_attention',
+                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                Streambuilder('connecting', TextStyle(fontSize: 16)),
+                LoadingBouncingGrid.circle()
+              ],
+            ),
           );
           _loading.show();
           List<String> hotp = new List();
           List<Map> totp = new List();
           if (HomeRow.length != 0) HomeRow.removeRange(0, HomeRow.length);
           int currentTime =
-          (DateTime.now().millisecondsSinceEpoch / 1000).round();
+              (DateTime.now().millisecondsSinceEpoch / 1000).round();
           String challenge =
-          (currentTime / 30).floor().toRadixString(16).padLeft(16, '0');
+              (currentTime / 30).floor().toRadixString(16).padLeft(16, '0');
           String calculateALL;
           try {
             await FlutterNfcKit.poll();
             await FlutterNfcKit.transceive('00A4040007A0000005272101');
-            calculateALL = await FlutterNfcKit.transceive('000500000A7408$challenge');
-          }catch(e){
+            calculateALL =
+                await FlutterNfcKit.transceive('000500000A7408$challenge');
+          } catch (e) {
             setState(() {
               _loading.dissmiss();
             });
@@ -489,8 +495,7 @@ class _KeysModuleState extends State<KeysModule> {
               _loading.dissmiss();
             });
             _alertDialog();
-          }
-          else {
+          } else {
             for (int i = 0; i < hotp.length; i++) {
               String strName = utf8Decode(hotp[i]);
               String utf8Name = hotp[i];
@@ -510,12 +515,11 @@ class _KeysModuleState extends State<KeysModule> {
             _successDialog('refresh_success');
           }
         },
-      btnOkText: "Connect"
-        )
+        btnOkText: "Connect")
       ..show();
   }
 
-  void initState(){
+  void initState() {
     super.initState();
     _nfcAvailabilityDetect();
   }
@@ -539,14 +543,18 @@ class _KeysModuleState extends State<KeysModule> {
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
         children: <Widget>[
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           ListTile(
-            title: Streambuilder('NFC_availability',TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            title: Streambuilder('NFC_availability',
+                TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             subtitle: Text(
               '$_nfcAvailability',
               style: TextStyle(color: nfcAvailabilityColor),
@@ -556,9 +564,12 @@ class _KeysModuleState extends State<KeysModule> {
               color: nfcAvailabilityColor,
             ),
             trailing: IconButton(
-              icon: Icon(Icons.refresh, key: LanguageBloc.key1,),
+              icon: Icon(
+                Icons.refresh,
+                key: LanguageBloc.key1,
+              ),
               color: Colors.black,
-              onPressed: (){
+              onPressed: () {
                 _nfcAvailabilityDetect();
                 setState(() {});
               },
@@ -569,13 +580,25 @@ class _KeysModuleState extends State<KeysModule> {
           )
         ],
       ),
-        bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
           iconSize: 30,
           elevation: 25,
           items: [
-            BottomNavigationBarItem(title: Text(""), icon: Icon(Icons.add, key: LanguageBloc.key2,)),
-            BottomNavigationBarItem(title: Text(""), icon: Icon(Icons.camera, key: LanguageBloc.key3,)),
-            BottomNavigationBarItem(title: Text(""), icon: Icon(Icons.refresh, key: LanguageBloc.key4)),
+            BottomNavigationBarItem(
+                title: Text(""),
+                icon: Icon(
+                  Icons.add,
+                  key: LanguageBloc.key2,
+                )),
+            BottomNavigationBarItem(
+                title: Text(""),
+                icon: Icon(
+                  Icons.camera,
+                  key: LanguageBloc.key3,
+                )),
+            BottomNavigationBarItem(
+                title: Text(""),
+                icon: Icon(Icons.refresh, key: LanguageBloc.key4)),
           ],
           currentIndex: _bottomIndex,
           onTap: (index) {
@@ -588,8 +611,7 @@ class _KeysModuleState extends State<KeysModule> {
             setState(() {
               _bottomIndex = index;
             });
-          }
-        ),
+          }),
     );
   }
 

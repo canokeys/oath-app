@@ -5,16 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tutorial_coach_mark/target_focus.dart';
 
-enum Language{
-  English,
-  Chinese,
-  Japanese,
-  French,
-  German
-}
+enum Language { English, Chinese, Japanese, French, German }
 
-
-class LanguageBloc{
+class LanguageBloc {
   static List<TargetFocus> targets = List<TargetFocus>();
   static GlobalKey key1 = GlobalKey();
   static GlobalKey key2 = GlobalKey();
@@ -29,22 +22,19 @@ class LanguageBloc{
   final _switchSubject = StreamController<Language>();
   Sink<Language> get languageSink => _switchSubject.sink;
 
-  LanguageBloc(){
-    Functions.loadSettings(Settings.filename).then((value) => _languagePackageObject.add(languagePackages[value.currentLan]));
+  LanguageBloc() {
+    Functions.loadSettings(Settings.filename).then((value) =>
+        _languagePackageObject.add(languagePackages[value.currentLan]));
     _switchSubject.stream.listen((Language language) {
-      if(language == Language.Chinese){
+      if (language == Language.Chinese) {
         _languagePackageObject.add(Chinese);
-      }
-      else if(language == Language.English){
+      } else if (language == Language.English) {
         _languagePackageObject.add(English);
-      }
-      else if(language==Language.Japanese){
+      } else if (language == Language.Japanese) {
         _languagePackageObject.add(Japanese);
-      }
-      else if(language==Language.French){
+      } else if (language == Language.French) {
         _languagePackageObject.add(French);
-      }
-      else if(language==Language.German){
+      } else if (language == Language.German) {
         _languagePackageObject.add(German);
       }
     });
