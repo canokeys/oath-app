@@ -34,7 +34,7 @@ LanguagePackage English = LanguagePackage({
   "connect": "Please use NFC to connect Canokey.We are adding new account now.",
   "credential_null": "Credentials in Canokey are null!",
   "account_name": "Account Name",
-  "account_key": "Key(UTF-8)",
+  "account_key": "Key",
   "refresh": "Refreshing Credentials Now.Please Connecting To Canokey.",
   "namedCanokey": "Named your Canokey",
   "input": "Input...",
@@ -52,7 +52,8 @@ LanguagePackage English = LanguagePackage({
   "bottom_add": "Add New Account By Hand",
   "bottom_scan": "Open Camera To Scan",
   "bottom_refresh": "Refresh Credentials",
-  "start_client": "Start Using Canokey!"
+  "start_client": "Start Using Canokey!",
+  "wrong_format": "The key is not in Base32 format!(A to Z , 2 to 7)"
 });
 
 // ignore: non_constant_identifier_names
@@ -83,7 +84,7 @@ LanguagePackage Chinese = LanguagePackage({
   "connect": "请通过NFC连接Canokey，我们正在尝试创建新账户",
   "credential_null": "Canokey中没有证书!",
   "account_name": "账户名称",
-  "account_key": "密钥(UTF-8）",
+  "account_key": "密钥",
   "refresh": "正在刷新证书。请将Canokey连接至设备。",
   "namedCanokey": "为您的Canokey命名",
   "input": "输入...",
@@ -98,9 +99,10 @@ LanguagePackage Chinese = LanguagePackage({
   "refresh_success": "成功刷新!",
   "refresh_info": "点击此处刷新NFC可用性",
   "bottom_add": "手动新增账号",
-  "bottom_scan": "打开摄像头扫描",
+  "bottom_scan": "打开摄像头扫码",
   "bottom_refresh": "刷新证书",
-  "start_client": "开始使用您的Canokey吧！"
+  "start_client": "开始使用您的Canokey吧！",
+  "wrong_format": "密钥的Base32格式有误！（A-Z，2-7）"
 });
 
 // ignore: non_constant_identifier_names
@@ -131,7 +133,7 @@ LanguagePackage Japanese = LanguagePackage({
   "connect": "请NFCを介してCanokeyに接続してください。新しいアカウントの作成を試みています",
   "credential_null": "Canokeyには証明書がない!",
   "account_name": "アカウント名",
-  "account_key": "鍵(UTF-8)",
+  "account_key": "鍵",
   "refresh": "正証明書を更新しています。デバイスにCanokeyを接続してください。",
   "namedCanokey": "貴方のCanokeyにちなんで名づけました",
   "input": "入力...",
@@ -148,7 +150,8 @@ LanguagePackage Japanese = LanguagePackage({
   "bottom_add": "手で新しい口座を加えてください",
   "bottom_scan": "開いているカメラをスキャンしてください",
   "bottom_refresh": "リフレッシュ資格情報",
-  "start_client": "あなたのCanokeyを使い始めましょう!"
+  "start_client": "あなたのCanokeyを使い始めましょう!",
+  "wrong_format": "鍵のBase 32フォーマットが間違っています.（A-Z，2-7）"
 });
 
 // ignore: non_constant_identifier_names
@@ -183,7 +186,7 @@ LanguagePackage French = LanguagePackage({
       "Veuillez connecter Canokey via NFC, nous essayons de créer un nouveau compte",
   "credential_null": "Il n'y a pas de certificat dans Canokey!",
   "account_name": "Account Name",
-  "account_key": "Clé (UTF-8)",
+  "account_key": "Clé",
   "refresh":
       "Actualisation du certificat. Veuillez connecter Canokey à l'appareil.",
   "namedCanokey": "Nommez votre Canoky",
@@ -202,7 +205,8 @@ LanguagePackage French = LanguagePackage({
   "bottom_add": "Ajouter un nouveau compte manuellement",
   "bottom_scan": "Ouvrez la caméra et scannez.",
   "bottom_refresh": "Mise à jour des documents",
-  "start_client": "Commencez à utiliser votre Canokey!"
+  "start_client": "Commencez à utiliser votre Canokey!",
+  "wrong_format": "Erreur dans le format de base - 32 de la clé!(A - Z, 2 - 7)"
 });
 
 // ignore: non_constant_identifier_names
@@ -236,7 +240,7 @@ LanguagePackage German = LanguagePackage({
       "Bitte verbinden Sie Canokey über NFC, wir versuchen ein neues Konto zu erstellen",
   "credential_null": "Es gibt kein Zertifikat in Canokey!",
   "account_name": "Kontoname",
-  "account_key": "Geheimer Schlüssel(UTF-8)",
+  "account_key": "Geheimer Schlüssel",
   "refresh":
       "Aktualisieren des Zertifikats. Bitte verbinden Sie Canokey mit dem Gerät.",
   "namedCanokey": "Nennen Sie Ihren Canoky",
@@ -257,5 +261,6 @@ LanguagePackage German = LanguagePackage({
   "bottom_add": "Neues Konto per Hand hinzufügen.",
   "bottom_scan": "Öffnen Sie Kamera zum Scannen",
   "bottom_refresh": "Aktualisieren von Anmeldedaten",
-  "start_client": "Starten Sie mit Ihrem Canokey!"
+  "start_client": "Starten Sie mit Ihrem Canokey!",
+  "wrong_format": "Das Basis32-Format des Schlüssels ist falsch!(A-Z,2-7)"
 });

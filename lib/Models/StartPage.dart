@@ -58,7 +58,7 @@ class _StartPageState extends State<StartPage> {
                     height: size.height / 5,
                   ),
                   Text(
-                    'version: 0.0.1',
+                    'version: 0.0.2',
                     style: TextStyle(fontSize: 10, color: Colors.grey),
                   )
                 ],
