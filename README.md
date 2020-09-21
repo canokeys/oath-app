@@ -38,9 +38,9 @@ A lead in page.Use for beautify the app.
 Tutorial.dart:
 A instruction to lead users to use this app.Load at the first installation and the time user click 'help'.
 
-##Update on 2020/9/21
+## Update on 2020/9/21
 
-###Mention:
+### Mention:
 Change the type of key that needed to be input in addDialog:
 **UTF-8 ----> BASE32**
 it means you need to input Base32 format key , or create credential by hand can't succeed.
