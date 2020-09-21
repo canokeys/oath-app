@@ -296,24 +296,47 @@ class _KeysModuleState extends State<KeysModule> {
         body: Column(
           children: <Widget>[
             Streambuilder('account_name', TextStyle(fontSize: 16)),
-            Container(
-              child: TextField(
-                maxLength: 64,
-                controller: _name,
-                autofocus: false,
+            TextField(
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.grey,
+                    width: 1.5
+                  )
+                ),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                  borderSide: BorderSide(
+                    color: Colors.blue,
+                    width: 1.5
+                  )
+                )
               ),
-              height: 50,
-              width: 200,
+              maxLength: 64,
+              controller: _name,
+              autofocus: false,
             ),
             Streambuilder('account_key', TextStyle(fontSize: 16)),
-            Container(
-              child: TextField(
-                maxLength: 128,
-                controller: _key,
-                autofocus: false,
+            TextField(
+              decoration: InputDecoration(
+                  hintText: "Base32",
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 1.5
+                      )
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      borderSide: BorderSide(
+                          color: Colors.blue,
+                          width: 1.5
+                      )
+                  )
               ),
-              height: 50,
-              width: 200,
+              maxLength: 128,
+              controller: _key,
+              autofocus: false,
             ),
             ToggleSwitch(
                 minWidth: 60.0,
@@ -329,19 +352,28 @@ class _KeysModuleState extends State<KeysModule> {
           ],
         ),
         btnOkOnPress: () async {
-          String typeAndalgorithm, nameInutf8 = '';
+          String typeAndalgorithm, nameInutf8 = '', key;
+          print(groupValue);
           if (groupValue == 0)
-            typeAndalgorithm = '11';
-          else
             typeAndalgorithm = '21';
+          else
+            typeAndalgorithm = '11';
           var intList = utf8.encode(_name.text);
           for (int i = 0; i < intList.length; i++) {
             nameInutf8 += intList[i].toRadixString(16);
           }
-          print('base32encode:${base32.encodeString(_key.text)}');
-          String key = typeAndalgorithm +
-              '06' +
-              base32.decodeAsHexString(base32.encodeString(_key.text));
+          try {
+            key = _key.text.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+            print(key);
+            key = key.toUpperCase();
+            print(key);
+            key = typeAndalgorithm + '06' + base32.decodeAsHexString(key);
+
+          } catch (e) {
+            print(e);
+            _failedDialog('wrong_format');
+            return;
+          }
           int datalen = 2 +
               (nameInutf8.length / 2).floor() +
               2 +
@@ -353,7 +385,6 @@ class _KeysModuleState extends State<KeysModule> {
           String dataLength = datalen.toRadixString(16).padLeft(2, '0');
           String order =
               '00010000${dataLength}71$nameLength${nameInutf8}73$keyLength$key';
-          print(order);
           var _loading = AwesomeDialog(
             context: context,
             headerAnimationLoop: false,

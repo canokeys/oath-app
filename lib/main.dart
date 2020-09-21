@@ -41,7 +41,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return MaterialApp(home: StartPage());
+    return MaterialApp(
+        home: StartPage(),
+    );
   }
 }
 
@@ -59,7 +61,7 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
     Language.Chinese,
     Language.Japanese,
     Language.French,
-    Language.German
+    Language.German,
   ];
   int currentLanguage;
 
