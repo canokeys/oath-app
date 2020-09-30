@@ -4,17 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:canokey/Models/LeftScrollPrefab.dart';
 import 'package:flutter/services.dart';
-import 'dart:io' show sleep;
 import 'dart:convert';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:base32/base32.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:loading_animations/loading_animations.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'StreamBuilder.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-
+import 'Dialogs.dart';
 // ignore: must_be_immutable
 class KeysModule extends StatefulWidget {
   @override
@@ -39,7 +37,6 @@ class _KeysModuleState extends State<KeysModule> {
   }
 
   parseResponse(String response, List<String> hotp, List<Map> totp) {
-    print(response);
     for (int i = 0; i < response.length; i++) {
       if (response[i] + response[i + 1] + response[i + 2] + response[i + 3] ==
           '9000')
@@ -47,7 +44,7 @@ class _KeysModuleState extends State<KeysModule> {
       else if (response[i] + response[i + 1] == '71') {
         int nameLen = _hexToInt(response[i + 2] + response[i + 3]) * 2;
         String name =
-            response.substring(i + 4, i + 4 + nameLen); //print('name: $name');
+            response.substring(i + 4, i + 4 + nameLen);
         if (response[i + 4 + nameLen] + response[i + 4 + nameLen + 1] == '77') {
           hotp.add(name);
           i += (4 + nameLen + 6) - 1;
@@ -75,15 +72,13 @@ class _KeysModuleState extends State<KeysModule> {
   }
 
   scan() async {
+    String order , otpType ,otpName , tmpStr ='' , accountName = '',key;
+    String nameLen,keyLen,dataLen;
+    int datalen = 0 , nmlen = 0 , keyDatalen = 0;
     var scanResult = await BarcodeScanner.scan();
-    print(scanResult.rawContent); // The barcode content
     Map regResult = otpauth(scanResult.rawContent);
-    print(regResult);
-    String order = '00010000';
-    String otpType;
-    int datalen = 0;
-    String otpName = regResult['otpName'];
-    String tmpStr = '';
+    order = '00010000';
+    otpName = regResult['otpName'];
     for (int i = 0; i < otpName.length; i++) {
       if (otpName[i] == '%') {
         int decode = int.parse(otpName[i + 1] + otpName[i + 2], radix: 16);
@@ -96,21 +91,15 @@ class _KeysModuleState extends State<KeysModule> {
     }
     otpName = tmpStr;
     List<int> encodeName = utf8.encode(otpName);
-    String accountName = '';
     for (int i = 0; i < encodeName.length; i++) {
       accountName += encodeName[i].toRadixString(16);
     }
-    int nmlen = (accountName.length / 2).round();
-    String nameLen;
+    nmlen = (accountName.length / 2).round();
     nameLen = nmlen.toRadixString(16).padLeft(2, '0');
-    String key = base32.decodeAsHexString(regResult['secret']);
-    print(key);
-    int keyDatalen = (key.length / 2).round() + 2;
-    String keyLen;
+    key = base32.decodeAsHexString(regResult['secret']);
+    keyDatalen = (key.length / 2).round() + 2;
     keyLen = keyDatalen.toRadixString(16).padLeft(2, '0');
-    print(keyLen);
     datalen += (2 + nmlen + 2 + keyDatalen);
-    String dataLen;
     dataLen = datalen.toRadixString(16).padLeft(2, '0');
     if (regResult['otpType'] == 'hotp') {
       otpType = '11';
@@ -125,19 +114,16 @@ class _KeysModuleState extends State<KeysModule> {
         datalen += 6;
         dataLen = datalen.toRadixString(16).padLeft(2, '0');
         counterData += int.parse(regResult['counter'], radix: 16).toString();
-        print(counterData);
         order +=
             '${dataLen}71$nameLen$accountName}73$keyLen${otpType}06${key}7A04$counterData';
       } else {
         order += '${dataLen}71$nameLen${accountName}73$keyLen${otpType}06$key';
       }
-      print(order);
-      _writeDialog(order);
+      writeDialog(order,context);
     } else {
       otpType = '21';
       order += '${dataLen}71$nameLen${accountName}73$keyLen${otpType}06$key';
-      print(order);
-      _writeDialog(order);
+      writeDialog(order,context);
     }
   }
 
@@ -161,126 +147,8 @@ class _KeysModuleState extends State<KeysModule> {
     return val;
   }
 
-  _successDialog(String info) {
-    AwesomeDialog(
-        context: context,
-        headerAnimationLoop: false,
-        dialogType: DialogType.SUCCES,
-        animType: AnimType.BOTTOMSLIDE,
-        padding: EdgeInsets.all(10),
-        body: Column(
-          children: <Widget>[
-            Streambuilder('success',
-                TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            Streambuilder(info, TextStyle(fontSize: 16))
-          ],
-        ),
-        btnOkOnPress: () {})
-      ..show();
-  }
 
-  _failedDialog(String info) {
-    AwesomeDialog(
-        context: context,
-        headerAnimationLoop: false,
-        dialogType: DialogType.ERROR,
-        padding: EdgeInsets.all(10),
-        animType: AnimType.BOTTOMSLIDE,
-        body: Column(
-          children: <Widget>[
-            Streambuilder('warning',
-                TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            Streambuilder(info, TextStyle(fontSize: 16))
-          ],
-        ),
-        btnOkOnPress: () {})
-      ..show();
-  }
 
-  _writeDialog(String order) {
-    AwesomeDialog(
-      context: context,
-      dialogType: DialogType.INFO,
-      animType: AnimType.BOTTOMSLIDE,
-      padding: EdgeInsets.all(10),
-      body: Column(
-        children: <Widget>[
-          Streambuilder('dialog_attention',
-              TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          Streambuilder('connect', TextStyle(fontSize: 16))
-        ],
-      ),
-      btnCancelOnPress: () {},
-      btnOkOnPress: () async {
-        var _loading = AwesomeDialog(
-          context: context,
-          headerAnimationLoop: false,
-          dialogType: DialogType.INFO,
-          animType: AnimType.BOTTOMSLIDE,
-          padding: EdgeInsets.all(10),
-          body: Column(
-            children: <Widget>[
-              Streambuilder('dialog_attention',
-                  TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              Streambuilder('connecting', TextStyle(fontSize: 16)),
-              LoadingBouncingGrid.circle()
-            ],
-          ),
-        );
-        _loading.show();
-        try {
-          await FlutterNfcKit.poll();
-          String re1 =
-              await FlutterNfcKit.transceive('00A4040007A0000005272101');
-          print(re1);
-          if (re1 == '9000') {
-            String re2 = await FlutterNfcKit.transceive(order);
-            print(re2);
-            if (re2 == '9000') {
-              setState(() {
-                _loading.dissmiss();
-              });
-              _successDialog('result_success');
-            } else {
-              setState(() {
-                _loading.dissmiss();
-              });
-              _failedDialog('result_Addfailed');
-            }
-          } else {
-            setState(() {
-              _loading.dissmiss();
-            });
-            _failedDialog('result_Confailed');
-          }
-        } catch (e) {
-          setState(() {
-            _loading.dissmiss();
-          });
-          _failedDialog('poll_timeout');
-        }
-        sleep(new Duration(seconds: 1));
-        await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
-      },
-    )..show();
-  }
-
-  _alertDialog() {
-    AwesomeDialog(
-        context: context,
-        headerAnimationLoop: false,
-        dialogType: DialogType.WARNING,
-        animType: AnimType.BOTTOMSLIDE,
-        padding: EdgeInsets.all(10),
-        body: Column(
-          children: <Widget>[
-            Streambuilder('dialog_attention', TextStyle(fontSize: 24)),
-            Streambuilder('credential_null', TextStyle(fontSize: 16))
-          ],
-        ),
-        btnOkOnPress: () {})
-      ..show();
-  }
 
   _addDialog() {
     TextEditingController _name = TextEditingController();
@@ -353,7 +221,6 @@ class _KeysModuleState extends State<KeysModule> {
         ),
         btnOkOnPress: () async {
           String typeAndalgorithm, nameInutf8 = '', key;
-          print(groupValue);
           if (groupValue == 0)
             typeAndalgorithm = '21';
           else
@@ -364,14 +231,10 @@ class _KeysModuleState extends State<KeysModule> {
           }
           try {
             key = _key.text.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
-            print(key);
             key = key.toUpperCase();
-            print(key);
             key = typeAndalgorithm + '06' + base32.decodeAsHexString(key);
-
           } catch (e) {
-            print(e);
-            _failedDialog('wrong_format');
+            failedDialog('wrong_format',context);
             return;
           }
           int datalen = 2 +
@@ -385,45 +248,27 @@ class _KeysModuleState extends State<KeysModule> {
           String dataLength = datalen.toRadixString(16).padLeft(2, '0');
           String order =
               '00010000${dataLength}71$nameLength${nameInutf8}73$keyLength$key';
-          var _loading = AwesomeDialog(
-            context: context,
-            headerAnimationLoop: false,
-            dialogType: DialogType.INFO,
-            animType: AnimType.BOTTOMSLIDE,
-            padding: EdgeInsets.all(10),
-            body: Column(
-              children: <Widget>[
-                Streambuilder('dialog_attention',
-                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                Streambuilder('connecting', TextStyle(fontSize: 16)),
-                LoadingBouncingGrid.circle()
-              ],
-            ),
-          );
+          var _loading = loading(context);
           _loading.show();
           try {
             await FlutterNfcKit.poll();
             String re1 =
                 await FlutterNfcKit.transceive('00A4040007A0000005272101');
-            print(re1);
             if (re1 == '9000') {
               String re2 = await FlutterNfcKit.transceive(order);
-              print(re2);
               if (re2 == '9000') {
                 setState(() {
                   _loading.dissmiss();
                 });
-                _successDialog('result_success');
+                successDialog('result_success',context);
               }
             }
           } catch (e) {
             setState(() {
               _loading.dissmiss();
             });
-            _failedDialog('poll_timeout');
+            failedDialog('poll_timeout', context);
           }
-          sleep(new Duration(seconds: 1));
-          await FlutterNfcKit.finish(iosAlertMessage: "Finished!");
         },
         btnCancelOnPress: () {})
       ..show();
@@ -453,7 +298,6 @@ class _KeysModuleState extends State<KeysModule> {
     for (int i = 0; i < str.length; i++) {
       sum += int.parse(str[i]) * pow(2, str.length - 1 - i);
     }
-    print(sum);
     return sum;
   }
 
@@ -479,21 +323,7 @@ class _KeysModuleState extends State<KeysModule> {
           ],
         ),
         btnOkOnPress: () async {
-          var _loading = AwesomeDialog(
-            context: context,
-            headerAnimationLoop: false,
-            dialogType: DialogType.INFO,
-            animType: AnimType.BOTTOMSLIDE,
-            padding: EdgeInsets.all(10),
-            body: Column(
-              children: <Widget>[
-                Streambuilder('dialog_attention',
-                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                Streambuilder('connecting', TextStyle(fontSize: 16)),
-                LoadingBouncingGrid.circle()
-              ],
-            ),
-          );
+          var _loading = loading(context);
           _loading.show();
           List<String> hotp = new List();
           List<Map> totp = new List();
@@ -512,20 +342,18 @@ class _KeysModuleState extends State<KeysModule> {
             setState(() {
               _loading.dissmiss();
             });
-            _failedDialog('poll_timeout');
+            failedDialog('poll_timeout',context);
           }
           while (RegExp(r"9000$").hasMatch(calculateALL) == false) {
             String moreData = await FlutterNfcKit.transceive('0006000000');
             calculateALL += moreData;
           }
           parseResponse(calculateALL, hotp, totp);
-          print('hotp:$hotp');
-          print('totp:$totp');
           if (hotp.length == 0 && totp.length == 0) {
             setState(() {
               _loading.dissmiss();
             });
-            _alertDialog();
+            alertDialog(context);
           } else {
             for (int i = 0; i < hotp.length; i++) {
               String strName = utf8Decode(hotp[i]);
@@ -543,7 +371,7 @@ class _KeysModuleState extends State<KeysModule> {
             setState(() {
               _loading.dissmiss();
             });
-            _successDialog('refresh_success');
+            successDialog('refresh_success',context);
           }
         },
         btnOkText: "Connect")

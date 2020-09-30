@@ -6,8 +6,8 @@ import 'package:left_scroll_actions/left_scroll_actions.dart';
 import 'package:left_scroll_actions/cupertinoLeftScroll.dart';
 import 'dart:math';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:loading_animations/loading_animations.dart';
 import 'StreamBuilder.dart';
+import 'Dialogs.dart';
 
 // ignore: must_be_immutable, camel_case_types
 class leftScroll extends StatefulWidget {
@@ -66,7 +66,6 @@ class _leftScrollState extends State<leftScroll> {
     for (int i = 0; i < strList.length; i++) {
       radix2result += strList[i];
     }
-    print(radix2result);
     var result = radix2to10(radix2result) % 1000000;
     return result.toString().padLeft(6, '0');
   }
@@ -80,25 +79,8 @@ class _leftScrollState extends State<leftScroll> {
     return sum;
   }
 
-  _failedDialog(String info) {
-    AwesomeDialog(
-        context: context,
-        headerAnimationLoop: false,
-        dialogType: DialogType.ERROR,
-        padding: EdgeInsets.all(10),
-        animType: AnimType.BOTTOMSLIDE,
-        body: Column(
-          children: <Widget>[
-            Streambuilder('warning',
-                TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            Streambuilder(info, TextStyle(fontSize: 16))
-          ],
-        ),
-        btnOkOnPress: () {})
-      ..show();
-  }
 
-  _alertDialog() {
+  _removeDialog() {
     AwesomeDialog(
         context: context,
         headerAnimationLoop: false,
@@ -117,43 +99,27 @@ class _leftScrollState extends State<leftScroll> {
           length = tmplength.toRadixString(16).padLeft(2, '0');
           nmLenth = (tmplength - 2).toRadixString(16).padLeft(2, '0');
           String command = '00020000${length}71${(nmLenth)}$nm';
-          var _loading = AwesomeDialog(
-            context: context,
-            headerAnimationLoop: false,
-            dialogType: DialogType.INFO,
-            animType: AnimType.BOTTOMSLIDE,
-            padding: EdgeInsets.all(10),
-            body: Column(
-              children: <Widget>[
-                Streambuilder('dialog_attention',
-                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                Streambuilder('connecting', TextStyle(fontSize: 16)),
-                LoadingBouncingGrid.circle()
-              ],
-            ),
-          );
+          var _loading = loading(context);
           _loading.show();
-          try{
+          try {
             await FlutterNfcKit.poll();
-            String connect = await FlutterNfcKit.transceive('00A4040007A0000005272101');
-            if (connect == "9000"){
+            String connect =
+                await FlutterNfcKit.transceive('00A4040007A0000005272101');
+            if (connect == "9000") {
               String result = await FlutterNfcKit.transceive((command));
               if (result == '9000') {
                 _loading.dissmiss();
                 widget.callback(this.widget);
                 _successDialog('success');
               }
-            }
-            else{
+            } else {
               _loading.dissmiss();
-              _failedDialog('poll_timeout');
+              failedDialog('poll_timeout',context);
             }
-          }
-          catch (e){
+          } catch (e) {
             _loading.dissmiss();
-            _failedDialog('poll_timeout');
+            failedDialog('poll_timeout',context);
           }
-
         },
         btnCancelOnPress: () {})
       ..show();
@@ -161,20 +127,19 @@ class _leftScrollState extends State<leftScroll> {
 
   _successDialog(String info) {
     AwesomeDialog(
-        context: context,
-        headerAnimationLoop: false,
-        dialogType: DialogType.SUCCES,
-        animType: AnimType.BOTTOMSLIDE,
-        padding: EdgeInsets.all(10),
-        body: Column(
-          children: <Widget>[
-            Streambuilder('success',
-                TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            Streambuilder(info, TextStyle(fontSize: 16))
-          ],
-        ),
-        )
-      ..show();
+      context: context,
+      headerAnimationLoop: false,
+      dialogType: DialogType.SUCCES,
+      animType: AnimType.BOTTOMSLIDE,
+      padding: EdgeInsets.all(10),
+      body: Column(
+        children: <Widget>[
+          Streambuilder(
+              'success', TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Streambuilder(info, TextStyle(fontSize: 16))
+        ],
+      ),
+    )..show();
   }
 
   @override
@@ -198,79 +163,63 @@ class _leftScrollState extends State<leftScroll> {
                   style: TextStyle(fontSize: 12),
                 ),
                 leading: Icon(Icons.vpn_key),
-                trailing: IconButton(
-                    icon: Icon(Icons.refresh),
-                    onPressed: () async {
-                      String nameLen = (widget.nameInUtf8.length / 2)
-                          .floor()
-                          .toRadixString(16)
-                          .padLeft(2, '0');
-                      int datalen = 2 + (widget.nameInUtf8.length / 2).floor();
-                      String tmpOrder = '00040000';
-                      if (widget.Type == 'TOTP') {
-                        int currentTime =
-                            (new DateTime.now().millisecondsSinceEpoch / 1000)
-                                .round();
-                        String challenge = (currentTime / 30)
-                            .floor()
-                            .toRadixString(16)
-                            .padLeft(16, '0');
-                        datalen += 10;
-                        tmpOrder +=
-                            '${datalen.toRadixString(16).padLeft(2, '0')}71$nameLen${widget.nameInUtf8}7408$challenge';
-                      } else {
-                        tmpOrder +=
-                            '${datalen.toRadixString(16).padLeft(2, '0')}71$nameLen${widget.nameInUtf8}';
-                      }
-                      print(tmpOrder);
-                      var _loading = AwesomeDialog(
-                        context: context,
-                        headerAnimationLoop: false,
-                        dialogType: DialogType.INFO,
-                        animType: AnimType.BOTTOMSLIDE,
-                        padding: EdgeInsets.all(10),
-                        body: Column(
-                          children: <Widget>[
-                            Streambuilder('dialog_attention',
-                                TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                            Streambuilder('connecting', TextStyle(fontSize: 16)),
-                            LoadingBouncingGrid.circle()
-                          ],
-                        ),
-                      );
-                      try{
-                        _loading.show();
-                        await FlutterNfcKit.poll();
-                        String connect = await FlutterNfcKit.transceive(
-                            '00A4040007A0000005272101');
-                        if (connect == "9000"){
-                          String calculate =
-                          await FlutterNfcKit.transceive(tmpOrder);
-                          String hexKey = calculate.substring(6, 14);
-                          String calResult = calculateKey(hexKey);
-                          setState(() {
-                            widget.oneTimePassword = calResult;
-                          });
-                          _loading.dissmiss();
-                          _successDialog('refresh_success');
-                        }
-                        else{
-                          _loading.dissmiss();
-                          _failedDialog('result_Confailed');
-                        }
-                      }
-                      catch (e){
-                        _loading.dissmiss();
-                        _failedDialog('poll_timeout');
-                      }
-                    }),
+//                trailing: IconButton(
+//                    icon: Icon(Icons.refresh),
+//                    onPressed: () async {
+//                      String nameLen = (widget.nameInUtf8.length / 2)
+//                          .floor()
+//                          .toRadixString(16)
+//                          .padLeft(2, '0');
+//                      int datalen = 2 + (widget.nameInUtf8.length / 2).floor();
+//                      String tmpOrder = '00040000';
+//                      if (widget.Type == 'TOTP') {
+//                        int currentTime =
+//                            (new DateTime.now().millisecondsSinceEpoch / 1000)
+//                                .round();
+//                        String challenge = (currentTime / 30)
+//                            .floor()
+//                            .toRadixString(16)
+//                            .padLeft(16, '0');
+//                        datalen += 10;
+//                        tmpOrder +=
+//                            '${datalen.toRadixString(16).padLeft(2, '0')}71$nameLen${widget.nameInUtf8}7408$challenge';
+//                      } else {
+//                        tmpOrder +=
+//                            '${datalen.toRadixString(16).padLeft(2, '0')}71$nameLen${widget.nameInUtf8}';
+//                      }
+//                      print(tmpOrder);
+//                      var _loading = loading(context);
+//                      try {
+//                        _loading.show();
+//                        await FlutterNfcKit.poll();
+//                        String connect = await FlutterNfcKit.transceive(
+//                            '00A4040007A0000005272101');
+//                        if (connect == "9000") {
+//                          String calculate =
+//                              await FlutterNfcKit.transceive(tmpOrder);
+//                          String hexKey = calculate.substring(6, 14);
+//                          String calResult = calculateKey(hexKey);
+//                          setState(() {
+//                            widget.oneTimePassword = calResult;
+//                          });
+//                          _loading.dissmiss();
+//                          _successDialog('refresh_success');
+//                        } else {
+//                          _loading.dissmiss();
+//                          failedDialog('result_Confailed',context);
+//                        }
+//                      } catch (e) {
+//                        _loading.dissmiss();
+//                        failedDialog('poll_timeout',context);
+//                      }
+//                    }),
               )),
           buttons: <Widget>[
             LeftScrollItem(
               text: 'Delete',
               color: Colors.red,
               onTap: () async {
-                _alertDialog();
+                _removeDialog();
                 setState(() {});
               },
               textColor: Colors.white,

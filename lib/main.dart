@@ -90,11 +90,27 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
     super.didChangeDependencies();
   }
 
+  Radio genRadio(int v,Function function){
+    Radio radio = Radio(
+      groupValue: currentLanguage,
+      activeColor: Colors.blue,
+      value: v,
+      onChanged:function
+    );
+    return radio;
+  }
+
   radioDialog() {
     showDialog(
         context: context,
         builder: (context) {
           return StatefulBuilder(builder: (context, state) {
+            Function func = (value) {
+              state(() {
+                currentLanguage = value;
+                print(currentLanguage);
+              });
+            };
             return AlertDialog(
                 content: Container(
               height: 300,
@@ -102,81 +118,31 @@ class _ScaffoldRouteState extends State<ScaffoldRoute> {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      Radio(
-                        groupValue: currentLanguage,
-                        activeColor: Colors.blue,
-                        value: 0,
-                        onChanged: (value) {
-                          state(() {
-                            currentLanguage = value;
-                            print(currentLanguage);
-                          });
-                        },
-                      ),
+                      genRadio(0, func),
                       Text('English'),
                     ],
                   ),
                   Row(
                     children: <Widget>[
-                      Radio(
-                        groupValue: currentLanguage,
-                        activeColor: Colors.blue,
-                        value: 1,
-                        onChanged: (value) {
-                          state(() {
-                            currentLanguage = value;
-                            print(currentLanguage);
-                          });
-                        },
-                      ),
+                      genRadio(1, func),
                       Text('中文')
                     ],
                   ),
                   Row(
                     children: <Widget>[
-                      Radio(
-                        groupValue: currentLanguage,
-                        activeColor: Colors.blue,
-                        value: 2,
-                        onChanged: (value) {
-                          state(() {
-                            currentLanguage = value;
-                            print(currentLanguage);
-                          });
-                        },
-                      ),
+                      genRadio(2, func),
                       Text('日本語')
                     ],
                   ),
                   Row(
                     children: <Widget>[
-                      Radio(
-                        groupValue: currentLanguage,
-                        activeColor: Colors.blue,
-                        value: 3,
-                        onChanged: (value) {
-                          state(() {
-                            currentLanguage = value;
-                            print(currentLanguage);
-                          });
-                        },
-                      ),
+                      genRadio(3, func),
                       Text('Français')
                     ],
                   ),
                   Row(
                     children: <Widget>[
-                      Radio(
-                        groupValue: currentLanguage,
-                        activeColor: Colors.blue,
-                        value: 4,
-                        onChanged: (value) {
-                          state(() {
-                            currentLanguage = value;
-                            print(currentLanguage);
-                          });
-                        },
-                      ),
+                      genRadio(4, func),
                       Text('Deutsch')
                     ],
                   ),

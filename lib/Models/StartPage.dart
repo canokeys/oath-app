@@ -38,8 +38,8 @@ class _StartPageState extends State<StartPage> {
                     height: size.height / 5,
                   ),
                   Container(
-                    height: 300,
-                    width: 300,
+                    height: size.height / 2.75,
+                    width: size.height / 2.75,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(150),
                         border: Border.all(color: Colors.blue, width: 3),
@@ -58,7 +58,7 @@ class _StartPageState extends State<StartPage> {
                     height: size.height / 5,
                   ),
                   Text(
-                    'version: 0.0.2',
+                    'version: 0.0.3',
                     style: TextStyle(fontSize: 10, color: Colors.grey),
                   )
                 ],
