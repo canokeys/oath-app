@@ -444,19 +444,19 @@ class _KeysModuleState extends State<KeysModule> {
           elevation: 25,
           items: [
             BottomNavigationBarItem(
-                title: Text(""),
+                label:"",
                 icon: Icon(
                   Icons.add,
                   key: LanguageBloc.key2,
                 )),
             BottomNavigationBarItem(
-                title: Text(""),
+                label:"",
                 icon: Icon(
                   Icons.camera,
                   key: LanguageBloc.key3,
                 )),
             BottomNavigationBarItem(
-                title: Text(""),
+                label:"",
                 icon: Icon(Icons.refresh, key: LanguageBloc.key4)),
           ],
           currentIndex: _bottomIndex,
